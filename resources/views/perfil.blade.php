@@ -12,6 +12,7 @@
 @section('title', 'Perfil - ' . $user->nome)
 
 @section('content')
+<!-- comentario mto legal -->
 <!-- Profile Header -->
 <div class="profile-header">
     <div class="profile-cover"></div>
