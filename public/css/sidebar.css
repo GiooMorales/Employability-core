@@ -1,0 +1,44 @@
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    position: fixed;
+    height: 100vh;
+    padding-top: var(--header-height);
+    z-index: 100;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary);
+    text-align: center;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    color: var(--dark);
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.menu-item:hover {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: var(--primary);
+    cursor: pointer;
+}
+
+.menu-item.active {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: var(--primary);
+    border-left: 4px solid var(--primary);
+}
+
+.menu-item i {
+    margin-right: 15px;
+    font-size: 20px;
+}
