@@ -89,9 +89,6 @@
         @include('sobre')
     </div>
     
-    <div id="atividades" class="tab-content">
-        @include('atividades')
-    </div>
     
     <div id="projetos" class="tab-content">
         @include('projetos')
