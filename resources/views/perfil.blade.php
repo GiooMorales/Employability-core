@@ -79,7 +79,6 @@
     <!-- Tabs -->
     <div class="profile-tabs">
         <div class="profile-tab active" data-tab="sobre">Sobre</div>
-        <div class="profile-tab" data-tab="atividades">Atividades</div>
         <div class="profile-tab" data-tab="projetos">Projetos</div>
         <div class="profile-tab" data-tab="certificados">Certificados</div>
         <div class="profile-tab" data-tab="repositorios">Repositórios</div>
