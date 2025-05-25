@@ -55,6 +55,37 @@
                 <div class="meta-item">
                     <span>{{ $usuario->profissao ?? 'Sem Profissão' }}</span>
                 </div>
+
+                @if(Auth::id() !== $usuario->id_usuarios)
+                    <div class="meta-item connection-actions">
+                        {{-- Botão de Conectar --}}
+                        @if($statusConexao === null)
+                            <form action="{{ route('connections.send', $usuario->id_usuarios) }}" method="POST" style="display:inline;">
+                                @csrf
+                                <button type="submit" class="btn btn-connect">
+                                    <i class="fas fa-user-plus"></i> Conectar
+                                </button>
+                            </form>
+                        @elseif($statusConexao === 'pendente')
+                            <button class="btn btn-pending" disabled>
+                                <i class="fas fa-clock"></i> Solicitação enviada
+                            </button>
+                        @elseif($statusConexao === 'aceita')
+                            <button class="btn btn-connected" disabled>
+                                <i class="fas fa-check"></i> Conectado
+                            </button>
+                        @elseif($statusConexao === 'recusada')
+                            <button class="btn btn-rejected" disabled>
+                                <i class="fas fa-times"></i> Solicitação recusada
+                            </button>
+                        @endif
+
+                        {{-- Botão de Compartilhar --}}
+                        <button class="btn btn-share" onclick="compartilharPerfil()">
+                            <i class="fas fa-share-alt"></i> Compartilhar
+                        </button>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -104,47 +135,29 @@
     </div>
 </div>
 
-@if(Auth::id() !== $usuario->id_usuarios)
-    <div class="profile-connection-actions">
-        {{-- Botão de Conectar --}}
-        @if($statusConexao === null)
-            <form action="{{ route('connections.send', $usuario->id_usuarios) }}" method="POST" style="display:inline;">
-                @csrf
-                <button type="submit" class="btn btn-connect">
-                    <i class="fas fa-user-plus"></i> Conectar
-                </button>
-            </form>
-        @elseif($statusConexao === 'pendente')
-            <button class="btn btn-pending" disabled>
-                <i class="fas fa-clock"></i> Solicitação enviada
-            </button>
-        @elseif($statusConexao === 'aceita')
-            <button class="btn btn-connected" disabled>
-                <i class="fas fa-check"></i> Conectado
-            </button>
-        @elseif($statusConexao === 'recusada')
-            <button class="btn btn-rejected" disabled>
-                <i class="fas fa-times"></i> Solicitação recusada
-            </button>
-        @endif
-
-        {{-- Botão de Compartilhar --}}
-        <button class="btn btn-share" onclick="compartilharPerfil()">
-            <i class="fas fa-share-alt"></i> Compartilhar
-        </button>
-    </div>
-@endif
-
 <style>
-.profile-connection-actions {
+.profile-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+}
+
+.connection-actions {
     display: flex;
     gap: 10px;
-    margin: 20px 0;
-    padding: 0 20px;
+    margin-left: auto;
 }
 
 .btn {
-    padding: 10px 20px;
+    padding: 8px 16px;
     border-radius: 20px;
     border: none;
     font-weight: 600;
@@ -153,10 +166,11 @@
     align-items: center;
     gap: 8px;
     transition: all 0.3s ease;
+    font-size: 14px;
 }
 
 .btn i {
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .btn-connect {
