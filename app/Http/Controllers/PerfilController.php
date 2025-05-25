@@ -184,4 +184,27 @@ class PerfilController extends Controller
             'message' => 'Nenhuma foto encontrada.'
         ]);
     }
+<<<<<<< Updated upstream
+=======
+
+    public function updateSkill(Request $request, $id)
+    {
+        $skill = Skill::findOrFail($id);
+        
+        // Verificar se o usuário é dono da skill
+        if ($skill->usuario_id !== Auth::id()) {
+            return response()->json(['success' => false, 'message' => 'Não autorizado'], 403);
+        }
+
+        $request->validate([
+            'nivel' => 'required|in:novato,intermediario,avancado'
+        ]);
+
+        $skill->update([
+            'nivel' => $request->nivel
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+>>>>>>> Stashed changes
 }
