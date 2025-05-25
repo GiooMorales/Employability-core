@@ -279,3 +279,70 @@ body {
 .fade-in {
     animation: fadeIn 0.5s ease-out;
 }
+
+/* Search Results */
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 5px;
+    max-height: 400px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+}
+
+.search-result-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--dark);
+    padding: 5px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.search-result-link:hover {
+    background-color: #f8f9fa;
+}
+
+.search-result-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 12px;
+    object-fit: cover;
+}
+
+.search-result-info {
+    flex: 1;
+}
+
+.search-result-name {
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.search-result-details {
+    font-size: 12px;
+    color: var(--secondary);
+}
+
+.no-results {
+    padding: 20px;
+    text-align: center;
+    color: var(--secondary);
+}

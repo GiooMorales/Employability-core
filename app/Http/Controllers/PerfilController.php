@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\User;
+use App\Models\Connection;
 
 class PerfilController extends Controller
 {
@@ -19,12 +21,19 @@ class PerfilController extends Controller
 
     public function index()
     {
-        $user = Auth::user();
-        $habilidades = $user->skills;
-        $experiencias = $user->experiences;
-        $formacoes = $user->education;
+        $usuario = Auth::user();
+        $habilidades = $usuario->skills;
+        $experiencias = $usuario->experiences;
+        $formacoes = $usuario->education;
         
-        return view('perfil', compact('user', 'habilidades', 'experiencias', 'formacoes'));
+        $estatisticas = [
+            'conexoes' => $usuario->connections()->where('status', 'aceita')->count(),
+            'projetos' => $usuario->projects()->count(),
+            'certificados' => $usuario->certificates()->count(),
+            'contribuicoes' => 0 // TODO: Implementar contagem de contribuições
+        ];
+        
+        return view('perfil', compact('usuario', 'habilidades', 'experiencias', 'formacoes', 'estatisticas'));
     }
 
     public function edit()
@@ -184,27 +193,32 @@ class PerfilController extends Controller
             'message' => 'Nenhuma foto encontrada.'
         ]);
     }
-<<<<<<< Updated upstream
-=======
 
-    public function updateSkill(Request $request, $id)
+    public function show($id)
     {
-        $skill = Skill::findOrFail($id);
+        $usuario = User::findOrFail($id);
+        $habilidades = $usuario->skills;
+        $experiencias = $usuario->experiences;
+        $formacoes = $usuario->education;
         
-        // Verificar se o usuário é dono da skill
-        if ($skill->usuario_id !== Auth::id()) {
-            return response()->json(['success' => false, 'message' => 'Não autorizado'], 403);
+        $estatisticas = [
+            'conexoes' => 0, // TODO: Implementar contagem de conexões
+            'projetos' => $usuario->projects()->count(),
+            'certificados' => $usuario->certificates()->count(),
+            'contribuicoes' => 0 // TODO: Implementar contagem de contribuições
+        ];
+        
+        $statusConexao = null;
+
+        if (auth()->check()) {
+            $connection = Connection::where('user_id', auth()->id())
+                ->where('connected_user_id', $id)
+                ->first();
+            if ($connection) {
+                $statusConexao = $connection->status;
+            }
         }
 
-        $request->validate([
-            'nivel' => 'required|in:novato,intermediario,avancado'
-        ]);
-
-        $skill->update([
-            'nivel' => $request->nivel
-        ]);
-
-        return response()->json(['success' => true]);
+        return view('perfil', compact('usuario', 'habilidades', 'experiencias', 'formacoes', 'estatisticas', 'statusConexao'));
     }
->>>>>>> Stashed changes
 }

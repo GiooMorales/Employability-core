@@ -98,7 +98,11 @@ class User extends Authenticatable
 
     public function connections()
     {
-        return $this->belongsToMany(User::class, 'connections', 'user_id', 'connected_user_id', 'id_usuarios', 'id_usuarios')
-            ->withTimestamps();
+        return $this->hasMany(Connection::class, 'user_id');
+    }
+
+    public function connectedUsers()
+    {
+        return $this->hasMany(Connection::class, 'connected_user_id');
     }
 }

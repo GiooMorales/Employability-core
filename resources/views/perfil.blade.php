@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ asset('/css/perfil.css') }}">
-    <title>Perfil - {{ $user->nome }}</title>
+    <title>Perfil - {{ $usuario->nome }}</title>
 </head>
 <body>
 @extends('layouts.app')
 
-@section('title', 'Perfil - ' . $user->nome)
+@section('title', 'Perfil - ' . $usuario->nome)
 
 @section('content')
 <!-- comentario mto legal -->
@@ -18,13 +18,14 @@
     <div class="profile-cover"></div>
     <div class="profile-main">
         <div class="profile-avatar-container">
-            <img src="{{ $user->url_foto ? asset('storage/' . $user->url_foto) : asset('images/default-avatar.png') }}" 
-                 alt="{{ $user->nome }}" 
+            <img src="{{ $usuario->url_foto ? asset('storage/' . $usuario->url_foto) : asset('images/default-avatar.png') }}" 
+                 alt="{{ $usuario->nome }}" 
                  class="profile-avatar-large">
         </div>
         <div class="profile-info">
             <div class="profile-name-container">
-                <h1 class="profile-name">{{ auth()->user()->nome }}</h1>
+                <h1 class="profile-name">{{ $usuario->nome }}</h1>
+                @if($usuario->id_usuarios === auth()->id())
                 <div class="profile-actions">
                     <button class="profile-action-btn edit-btn">
                         <a href="{{ route('editar') }}">
@@ -35,23 +36,24 @@
                         <i class="fas fa-share-alt"></i> Compartilhar
                     </button>
                 </div>
+                @endif
             </div>
-            <h2 class="profile-title">{{ $user->titulo ?? '' }}</h2>
+            <h2 class="profile-title">{{ $usuario->titulo ?? '' }}</h2>
             <div class="profile-meta">
                 <div class="meta-item">
                     <i class="fas fa-map-marker-alt"></i>
-                    <span>{{ $user->cidade && $user->estado ? $user->cidade . ', ' . $user->estado : 'Localização desconhecida' }}</span>
+                    <span>{{ $usuario->cidade && $usuario->estado ? $usuario->cidade . ', ' . $usuario->estado : 'Localização desconhecida' }}</span>
                 </div>
                 <div class="meta-item">
                     <i class="fas fa-link"></i>
-                    @if($user->link)
-                        <a href="{{ $user->link }}" target="_blank" class="profile-link">{{ $user->link }}</a>
+                    @if($usuario->link)
+                        <a href="{{ $usuario->link }}" target="_blank" class="profile-link">{{ $usuario->link }}</a>
                     @else
                         <span class="text-muted">Nenhum link adicionado</span>
                     @endif
                 </div>
                 <div class="meta-item">
-                    <span>{{ $user->profissao ?? 'Sem Profissão' }}</span>
+                    <span>{{ $usuario->profissao ?? 'Sem Profissão' }}</span>
                 </div>
             </div>
         </div>
@@ -59,19 +61,19 @@
 
     <div class="profile-stats-bar">
         <div class="stat">
-            <div class="stat-number">{{ $estatisticas->conexoes ?? '0' }}</div>
+            <div class="stat-number">{{ $estatisticas['conexoes'] ?? '0' }}</div>
             <div class="stat-label">Conexões</div>
         </div>
         <div class="stat">
-            <div class="stat-number">{{ $estatisticas->projetos ?? '0' }}</div>
+            <div class="stat-number">{{ $estatisticas['projetos'] ?? '0' }}</div>
             <div class="stat-label">Projetos</div>
         </div>
         <div class="stat">
-            <div class="stat-number">{{ $estatisticas->certificados ?? '0' }}</div>
+            <div class="stat-number">{{ $estatisticas['certificados'] ?? '0' }}</div>
             <div class="stat-label">Certificados</div>
         </div>
         <div class="stat">
-            <div class="stat-number">{{ $estatisticas->contribuicoes ?? '0' }}</div>
+            <div class="stat-number">{{ $estatisticas['contribuicoes'] ?? '0' }}</div>
             <div class="stat-label">Contribuições</div>
         </div>
     </div>
@@ -89,7 +91,6 @@
         @include('sobre')
     </div>
     
-    
     <div id="projetos" class="tab-content">
         @include('projetos')
     </div>
@@ -102,6 +103,112 @@
         @include('repositorios')
     </div>
 </div>
+
+@if(Auth::id() !== $usuario->id_usuarios)
+    <div class="profile-connection-actions">
+        {{-- Botão de Conectar --}}
+        @if($statusConexao === null)
+            <form action="{{ route('connections.send', $usuario->id_usuarios) }}" method="POST" style="display:inline;">
+                @csrf
+                <button type="submit" class="btn btn-connect">
+                    <i class="fas fa-user-plus"></i> Conectar
+                </button>
+            </form>
+        @elseif($statusConexao === 'pendente')
+            <button class="btn btn-pending" disabled>
+                <i class="fas fa-clock"></i> Solicitação enviada
+            </button>
+        @elseif($statusConexao === 'aceita')
+            <button class="btn btn-connected" disabled>
+                <i class="fas fa-check"></i> Conectado
+            </button>
+        @elseif($statusConexao === 'recusada')
+            <button class="btn btn-rejected" disabled>
+                <i class="fas fa-times"></i> Solicitação recusada
+            </button>
+        @endif
+
+        {{-- Botão de Compartilhar --}}
+        <button class="btn btn-share" onclick="compartilharPerfil()">
+            <i class="fas fa-share-alt"></i> Compartilhar
+        </button>
+    </div>
+@endif
+
+<style>
+.profile-connection-actions {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    padding: 0 20px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn i {
+    font-size: 16px;
+}
+
+.btn-connect {
+    background-color: #0a66c2;
+    color: white;
+}
+
+.btn-connect:hover {
+    background-color: #004182;
+}
+
+.btn-pending {
+    background-color: #ffd700;
+    color: #000;
+}
+
+.btn-connected {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-rejected {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-share {
+    background-color: #f8f9fa;
+    color: #0a66c2;
+    border: 1px solid #0a66c2;
+}
+
+.btn-share:hover {
+    background-color: #e8f0fe;
+}
+
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+</style>
+
+<script>
+function compartilharPerfil() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(function() {
+        alert('Link do perfil copiado!');
+    }, function() {
+        alert('Não foi possível copiar o link.');
+    });
+}
+</script>
 @endsection
 
 @section('scripts')
@@ -128,7 +235,6 @@
     });
 </script>
 @endsection
-
 
 </body>
 </html>

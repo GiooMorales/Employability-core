@@ -8,6 +8,8 @@ use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\CertificadoController;
 use App\Http\Controllers\RepositorioController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ConnectionController;
 
 // Rota raiz
 Route::get('/', function () {
@@ -26,6 +28,7 @@ Route::middleware(['auth'])->group(function () {
     
     // Rotas do perfil
     Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil');
+    Route::get('/perfil/{id}', [PerfilController::class, 'show'])->name('perfil.show');
     Route::get('/perfil/editar', [PerfilController::class, 'edit'])->name('editar');
     Route::post('/perfil/atualizar', [PerfilController::class, 'update'])->name('perfil.atualizar');
     Route::put('/perfil/senha', [PerfilController::class, 'updatePassword'])->name('profile.password');
@@ -63,5 +66,11 @@ Route::middleware(['auth'])->group(function () {
     // Rotas para Repositórios
     Route::get('/repositorios/atualizar', [RepositorioController::class, 'update'])->name('repositorios.atualizar');
     
+    Route::get('/search', [SearchController::class, 'search'])->name('search');
+    
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::post('/connections/send/{userId}', [ConnectionController::class, 'send'])->name('connections.send');
+    Route::post('/connections/accept/{connectionId}', [ConnectionController::class, 'accept'])->name('connections.accept');
+    Route::post('/connections/reject/{connectionId}', [ConnectionController::class, 'reject'])->name('connections.reject');
 });
