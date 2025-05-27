@@ -232,6 +232,46 @@ body {
 }
 
 /* Responsive */
+@media (min-width: 1921px) {
+    .main-content {
+        max-width: 1600px;
+        margin-left: calc(250px + (100% - 250px - 1600px) / 2);
+    }
+    
+    .container {
+        max-width: 1920px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 1600px) {
+    .main-content {
+        max-width: 1400px;
+        margin-left: calc(250px + (100% - 250px - 1400px) / 2);
+    }
+}
+
+@media (max-width: 1440px) {
+    .main-content {
+        max-width: 1200px;
+        margin-left: calc(250px + (100% - 250px - 1200px) / 2);
+    }
+}
+
+@media (max-width: 1366px) {
+    .main-content {
+        max-width: 1100px;
+        margin-left: calc(250px + (100% - 250px - 1100px) / 2);
+    }
+}
+
+@media (max-width: 1280px) {
+    .main-content {
+        max-width: 1000px;
+        margin-left: calc(250px + (100% - 250px - 1000px) / 2);
+    }
+}
+
 @media (max-width: 1200px) {
     .main-content {
         margin-left: 250px;

@@ -589,130 +589,174 @@ body {
 }
 
 /* Responsive */
+@media (min-width: 1921px) {
+    .content-columns {
+        grid-template-columns: 1fr 3fr 1fr;
+        max-width: 1800px;
+        margin: 0 auto;
+    }
+    
+    .post-image {
+        max-height: 500px;
+    }
+}
+
+@media (max-width: 1600px) {
+    .content-columns {
+        grid-template-columns: 1fr 2.5fr 1fr;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 1440px) {
+    .content-columns {
+        grid-template-columns: 1fr 2.5fr 1fr;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 1366px) {
+    .content-columns {
+        grid-template-columns: 1fr 2fr 1fr;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 1280px) {
+    .content-columns {
+        grid-template-columns: 1fr 2fr 1fr;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+}
+
 @media (max-width: 1200px) {
-  .content-columns {
-    grid-template-columns: 1fr 2fr;
-    max-width: 1000px;
-    margin: 0 0 0 20px;
-  }
-  
-  .right-sidebar {
-    display: none;
-  }
-  
-  .post-image {
-    max-height: 300px;
-  }
+    .content-columns {
+        grid-template-columns: 1fr 2fr;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .right-sidebar {
+        display: none;
+    }
+    
+    .post-image {
+        max-height: 300px;
+    }
 }
 
 @media (max-width: 992px) {
-  .content-columns {
-    grid-template-columns: 1fr;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  .left-sidebar {
-    display: none;
-  }
-  
-  .profile-card {
-    display: none;
-  }
+    .content-columns {
+        grid-template-columns: 1fr;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .left-sidebar {
+        display: none;
+    }
+    
+    .profile-card {
+        display: none;
+    }
 }
 
 @media (max-width: 768px) {
-  :root {
-    --sidebar-width: 0;
-  }
+    :root {
+        --sidebar-width: 0;
+    }
 
-  .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-  }
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
 
-  .sidebar.active {
-    transform: translateX(0);
-    width: 240px;
-  }
-  
-  .menu-item span {
-    display: none;
-  }
-  
-  .sidebar.active .menu-item span {
-    display: inline;
-  }
-  
-  .logo {
-    font-size: 16px;
-  }
-  
-  .main-content {
-    margin-left: 0;
-    margin-top: -120px;
-  }
-  
-  .header {
-    left: 0;
-    padding: 0 15px;
-  }
-  
-  .content-columns {
-    grid-template-columns: 1fr;
-    margin: 0 15px;
-  }
-  
-  .search-container {
-    display: none;
-  }
-  
-  .post-actions {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .post-tools {
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  .publish-btn {
-    width: 100%;
-  }
+    .sidebar.active {
+        transform: translateX(0);
+        width: 240px;
+    }
+    
+    .menu-item span {
+        display: none;
+    }
+    
+    .sidebar.active .menu-item span {
+        display: inline;
+    }
+    
+    .logo {
+        font-size: 16px;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        margin-top: -120px;
+    }
+    
+    .header {
+        left: 0;
+        padding: 0 15px;
+    }
+    
+    .content-columns {
+        grid-template-columns: 1fr;
+        margin: 0 15px;
+    }
+    
+    .search-container {
+        display: none;
+    }
+    
+    .post-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .post-tools {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .publish-btn {
+        width: 100%;
+    }
 }
 
 @media (max-width: 576px) {
-  .header {
-    height: 50px;
-  }
-  
-  .main-content {
-    margin-top: -110px;
-  }
-  
-  .post-header {
-    padding: 10px;
-  }
-  
-  .post-content {
-    padding: 0 10px 10px;
-  }
-  
-  .post-footer {
-    padding: 10px;
-  }
-  
-  .post-image {
-    max-height: 200px;
-  }
-  
-  .user-menu .notification {
-    margin-right: 10px;
-  }
-  
-  .user-avatar {
-    width: 28px;
-    height: 28px;
-  }
+    .header {
+        height: 50px;
+    }
+    
+    .main-content {
+        margin-top: -110px;
+    }
+    
+    .post-header {
+        padding: 10px;
+    }
+    
+    .post-content {
+        padding: 0 10px 10px;
+    }
+    
+    .post-footer {
+        padding: 10px;
+    }
+    
+    .post-image {
+        max-height: 200px;
+    }
+    
+    .user-menu .notification {
+        margin-right: 10px;
+    }
+    
+    .user-avatar {
+        width: 28px;
+        height: 28px;
+    }
 }
