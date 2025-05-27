@@ -8,17 +8,19 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('skills', function (Blueprint $table) {
+        Schema::create('certificates', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('usuarios', 'id_usuarios')->onDelete('cascade');
-            $table->string('nome', 100);
-            $table->string('nivel', 50)->default('Intermediário');
+            $table->string('nome');
+            $table->string('instituicao');
+            $table->date('data_obtencao');
+            $table->string('arquivo')->nullable();
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('skills');
+        Schema::dropIfExists('certificates');
     }
 }; 

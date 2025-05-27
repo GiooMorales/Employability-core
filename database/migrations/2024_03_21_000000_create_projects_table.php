@@ -8,17 +8,21 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('skills', function (Blueprint $table) {
+        Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('usuarios', 'id_usuarios')->onDelete('cascade');
-            $table->string('nome', 100);
-            $table->string('nivel', 50)->default('Intermediário');
+            $table->string('titulo');
+            $table->text('descricao');
+            $table->string('url')->nullable();
+            $table->string('imagem')->nullable();
+            $table->date('data_inicio');
+            $table->date('data_fim')->nullable();
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('skills');
+        Schema::dropIfExists('projects');
     }
 }; 

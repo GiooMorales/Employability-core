@@ -8,17 +8,17 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('skills', function (Blueprint $table) {
+        Schema::create('connections', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('usuarios', 'id_usuarios')->onDelete('cascade');
-            $table->string('nome', 100);
-            $table->string('nivel', 50)->default('Intermediário');
+            $table->foreignId('connected_user_id')->constrained('usuarios', 'id_usuarios')->onDelete('cascade');
+            $table->enum('status', ['pendente', 'aceita', 'recusada'])->default('pendente');
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('skills');
+        Schema::dropIfExists('connections');
     }
 }; 
