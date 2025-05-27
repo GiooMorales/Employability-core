@@ -822,16 +822,71 @@ body {
 }
 
 /* Responsive */
-@media (max-width: 992px) {
+@media (max-width: 1200px) {
+    .main-content {
+        margin-left: 250px;
+        max-width: calc(100% - 250px);
+    }
+    
     .projects-grid,
     .certificates-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
+@media (max-width: 992px) {
+    .sidebar {
+        width: 60px;
+        min-width: 60px;
+    }
+    
+    .menu-item span {
+        display: none;
+    }
+    
+    .menu-item i {
+        margin-right: 0;
+        font-size: 20px;
+    }
+    
+    .main-content {
+        margin-left: 60px;
+        max-width: calc(100% - 60px);
+    }
+    
+    .profile-cover {
+        height: 150px;
+    }
+    
+    .profile-avatar-large {
+        width: 120px;
+        height: 120px;
+    }
+}
+
 @media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+        width: 240px;
+    }
+    
+    .sidebar.active .menu-item span {
+        display: inline;
+    }
+    
+    .sidebar.active .menu-item i {
+        margin-right: 15px;
+    }
+    
     .main-content {
         margin-left: 0;
+        max-width: 100%;
+        padding: 15px;
     }
     
     .profile-main {
@@ -857,5 +912,63 @@ body {
     .projects-grid,
     .certificates-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .profile-stats-bar {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .stat {
+        flex: 1;
+        min-width: 120px;
+    }
+}
+
+@media (max-width: 576px) {
+    .header {
+        height: 50px;
+    }
+    
+    .profile-cover {
+        height: 120px;
+    }
+    
+    .profile-avatar-large {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .profile-name {
+        font-size: 20px;
+    }
+    
+    .profile-title {
+        font-size: 14px;
+    }
+    
+    .profile-bio {
+        font-size: 14px;
+    }
+    
+    .profile-meta {
+        font-size: 12px;
+    }
+    
+    .stat-number {
+        font-size: 20px;
+    }
+    
+    .stat-label {
+        font-size: 12px;
+    }
+    
+    .project-card,
+    .certificate-card {
+        margin-bottom: 15px;
+    }
+    
+    .project-image {
+        height: 120px;
     }
 }

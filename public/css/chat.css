@@ -471,28 +471,65 @@ body {
     .messages-container {
         grid-template-columns: 280px 1fr;
     }
+    
+    .conversation-item {
+        padding: 12px;
+    }
+    
+    .conversation-avatar {
+        width: 40px;
+        height: 40px;
+    }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
     .sidebar {
         width: 60px;
+        min-width: 60px;
     }
     
     .menu-item span {
         display: none;
     }
     
-    .logo {
-        font-size: 16px;
-        padding: 15px 5px;
+    .menu-item i {
+        margin-right: 0;
+        font-size: 20px;
     }
     
     .main-content {
         margin-left: 60px;
+        max-width: calc(100% - 60px);
     }
     
-    .search-container {
-        display: none;
+    .messages-container {
+        grid-template-columns: 240px 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+        width: 240px;
+    }
+    
+    .sidebar.active .menu-item span {
+        display: inline;
+    }
+    
+    .sidebar.active .menu-item i {
+        margin-right: 15px;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        max-width: 100%;
+        padding: 15px;
     }
     
     .messages-container {
@@ -503,13 +540,83 @@ body {
         display: none;
     }
     
+    .conversations-list.active {
+        display: flex;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1000;
+    }
+    
     .chat-area {
         display: flex;
     }
-
+    
     .mobile-back {
         display: block;
         margin-right: 10px;
         cursor: pointer;
+    }
+    
+    .chat-header {
+        padding: 10px;
+    }
+    
+    .chat-messages {
+        padding: 10px;
+    }
+    
+    .message {
+        max-width: 85%;
+    }
+    
+    .chat-input-container {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .header {
+        height: 50px;
+    }
+    
+    .main-content {
+        padding: 10px;
+    }
+    
+    .chat-header {
+        padding: 8px;
+    }
+    
+    .chat-messages {
+        padding: 8px;
+    }
+    
+    .message {
+        max-width: 90%;
+        padding: 8px 12px;
+    }
+    
+    .message-time {
+        font-size: 10px;
+    }
+    
+    .chat-input-container {
+        padding: 8px;
+    }
+    
+    .chat-input {
+        padding: 8px 12px;
+    }
+    
+    .chat-actions {
+        gap: 8px;
+    }
+    
+    .chat-action-btn {
+        width: 32px;
+        height: 32px;
     }
 }

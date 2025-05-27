@@ -232,13 +232,70 @@ body {
 }
 
 /* Responsive */
+@media (min-width: 1921px) {
+    .main-content {
+        max-width: 1600px;
+        margin-left: calc(250px + (100% - 250px - 1600px) / 2);
+    }
+    
+    .container {
+        max-width: 1920px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 1600px) {
+    .main-content {
+        max-width: 1400px;
+        margin-left: calc(250px + (100% - 250px - 1400px) / 2);
+    }
+}
+
+@media (max-width: 1440px) {
+    .main-content {
+        max-width: 1200px;
+        margin-left: calc(250px + (100% - 250px - 1200px) / 2);
+    }
+}
+
+@media (max-width: 1366px) {
+    .main-content {
+        max-width: 1100px;
+        margin-left: calc(250px + (100% - 250px - 1100px) / 2);
+    }
+}
+
+@media (max-width: 1280px) {
+    .main-content {
+        max-width: 1000px;
+        margin-left: calc(250px + (100% - 250px - 1000px) / 2);
+    }
+}
+
+@media (max-width: 1200px) {
+    .main-content {
+        margin-left: 250px;
+        max-width: calc(100% - 250px);
+    }
+    
+    .search-container {
+        max-width: 500px;
+    }
+}
+
 @media (max-width: 992px) {
     .sidebar {
         width: 60px;
+        min-width: 60px;
     }
     
     .menu-item span {
         display: none;
+    }
+    
+    .menu-item i {
+        margin-right: 0;
+        font-size: 20px;
     }
     
     .main-content {
@@ -252,10 +309,55 @@ body {
 }
 
 @media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+        width: 240px;
+    }
+    
+    .sidebar.active .menu-item span {
+        display: inline;
+    }
+    
+    .sidebar.active .menu-item i {
+        margin-right: 15px;
+    }
+    
     .main-content {
         margin-left: 0;
         max-width: 100%;
         padding: 15px;
+    }
+    
+    .header {
+        padding: 0 15px;
+    }
+    
+    .user-menu .notification {
+        margin-right: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .header {
+        height: 50px;
+    }
+    
+    .logo {
+        font-size: 20px;
+    }
+    
+    .user-avatar {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .main-content {
+        padding: 10px;
     }
 }
 
