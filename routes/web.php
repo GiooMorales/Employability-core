@@ -28,7 +28,6 @@ Route::middleware(['auth'])->group(function () {
     
     // Rotas do perfil
     Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil');
-    Route::get('/perfil/{id}', [PerfilController::class, 'show'])->name('perfil.show');
     Route::get('/perfil/editar', [PerfilController::class, 'edit'])->name('editar');
     Route::post('/perfil/atualizar', [PerfilController::class, 'update'])->name('perfil.atualizar');
     Route::put('/perfil/senha', [PerfilController::class, 'updatePassword'])->name('profile.password');
@@ -42,6 +41,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/perfil/habilidade', [PerfilController::class, 'addSkill'])->name('profile.skill');
     Route::delete('/perfil/habilidade/{id}', [PerfilController::class, 'removeSkill'])->name('profile.skill.delete');
     Route::post('/perfil/remover-foto', [PerfilController::class, 'removePhoto'])->name('perfil.remover-foto');
+    
+    // Rota para visualizar perfil de outro usuário (deve ser a última rota do perfil)
+    Route::get('/perfil/{id}', [PerfilController::class, 'show'])->name('perfil.show');
     
     Route::get('/mensagens', function () {
         return view('mensagens');
