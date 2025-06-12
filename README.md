@@ -37,7 +37,7 @@ php artisan key:generate
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=employabilit_core
+DB_DATABASE=ecbd
 DB_USERNAME=seu_usuario
 DB_PASSWORD=sua_senha
 ```
@@ -47,11 +47,9 @@ DB_PASSWORD=sua_senha
 php artisan migrate
 ```
 
-7. Instale as dependências do Node.js e compile os assets:
-```bash
-npm install
-npm run dev
-```
+7. instale no terminal:
+    php artisan key:generate
+    php artisan storage:link
 
 8. Inicie o servidor de desenvolvimento:
 ```bash

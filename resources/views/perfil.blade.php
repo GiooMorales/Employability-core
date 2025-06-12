@@ -42,7 +42,7 @@
             <div class="profile-meta">
                 <div class="meta-item">
                     <i class="fas fa-map-marker-alt"></i>
-                    <span>{{ $usuario->cidade && $usuario->estado ? $usuario->cidade . ', ' . $usuario->estado : 'Localização desconhecida' }}</span>
+                    <span>{{ $usuario->cidade ?? 'Localização desconhecida' }}</span>
                 </div>
                 <div class="meta-item">
                     <i class="fas fa-link"></i>

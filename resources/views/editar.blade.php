@@ -84,7 +84,7 @@
                         <div class="form-row">
                             <div class="form-col">
                                 <label class="form-label">Localização</label>
-                                <input type="text" class="form-input" name="localizacao" value="{{ old('localizacao', $user->localizacao) }}">
+                                <input type="text" class="form-input" name="cidade" value="{{ old('localizacao', $user->cidade) }}">
                             </div>
                         </div>
 
