@@ -12,7 +12,7 @@
             <span>Sobre mim</span>
         </div>
         <div class="about-item-content">
-            {{ $user->bio ?? 'Adicione uma descrição sobre você.' }}
+            {{ $usuario->bio ?? 'Adicione uma descrição sobre você.' }}
         </div>
     </div>
 

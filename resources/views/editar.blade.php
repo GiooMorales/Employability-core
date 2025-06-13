@@ -161,15 +161,115 @@
         </div>
     </div>
 </div>
-@endsection
+
+<!-- Modal de Seleção de Nível -->
+<div id="nivelModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h3>Selecione seu nível</h3>
+        <div class="nivel-options">
+            <button class="nivel-btn" data-nivel="Iniciante">Iniciante</button>
+            <button class="nivel-btn" data-nivel="Intermediário">Intermediário</button>
+            <button class="nivel-btn" data-nivel="Avançado">Avançado</button>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeNivelModal()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+}
+
+.nivel-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.nivel-btn {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nivel-btn:hover {
+    background: #f0f0f0;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.skill-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: #f0f0f0;
+    border-radius: 20px;
+    margin: 4px;
+}
+
+.skill-level {
+    font-size: 0.8em;
+    color: #666;
+    background: #e0e0e0;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+</style>
 
 @section('scripts')
 <script>
+let selectedSkill = null;
+
+function showNivelModal(skillName) {
+    selectedSkill = skillName;
+    document.getElementById('nivelModal').style.display = 'flex';
+}
+
+function closeNivelModal() {
+    document.getElementById('nivelModal').style.display = 'none';
+    selectedSkill = null;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Marcar as habilidades já selecionadas
-    const userSkills = Array.from(document.querySelectorAll('.skill-tag')).map(tag => tag.textContent.trim());
+    const userSkills = Array.from(document.querySelectorAll('.skill-tag')).map(tag => ({
+        name: tag.textContent.trim().split(' - ')[0],
+        level: tag.querySelector('.skill-level')?.textContent || 'Intermediário'
+    }));
+
     document.querySelectorAll('.skill-item').forEach(item => {
-        if (userSkills.includes(item.textContent.trim())) {
+        const skillName = item.textContent.trim();
+        const userSkill = userSkills.find(s => s.name === skillName);
+        if (userSkill) {
             item.classList.add('selected');
         }
     });
@@ -179,95 +279,93 @@ document.addEventListener('DOMContentLoaded', function() {
         item.addEventListener('click', function() {
             const skillName = this.textContent.trim();
             const isSelected = this.classList.contains('selected');
+            
             if (!isSelected) {
-                // Adicionar habilidade
-                fetch('/perfil/habilidade', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        nome: skillName,
-                        nivel: 'Intermediário'
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        this.classList.add('selected');
-                        // Adicionar visualmente na lista de skills do usuário
-                        const container = document.getElementById('skillsContainer');
-                        const skillTag = document.createElement('div');
-                        skillTag.className = 'skill-tag';
-                        skillTag.setAttribute('data-skill-id', data.skill.id);
-                        skillTag.textContent = skillName;
-                        container.appendChild(skillTag);
-                    }
-                });
+                showNivelModal(skillName);
             } else {
                 // Remover habilidade
-                // Descobrir o ID da skill (buscando no DOM)
-                const skillTag = Array.from(document.querySelectorAll('.skill-tag')).find(tag => tag.textContent.trim() === skillName);
+                const skillTag = Array.from(document.querySelectorAll('.skill-tag'))
+                    .find(tag => tag.textContent.trim().startsWith(skillName));
                 if (skillTag) {
                     const skillId = skillTag.getAttribute('data-skill-id');
-                    fetch(`/perfil/habilidade/${skillId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            this.classList.remove('selected');
-                            skillTag.remove();
-                        }
-                    });
+                    removeSkill(skillId);
                 }
             }
         });
     });
 
-    // Adicionar habilidade personalizada ao pressionar Enter
-    document.getElementById('skillInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            addSkill();
+    // Configurar botões de nível
+    document.querySelectorAll('.nivel-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const nivel = this.getAttribute('data-nivel');
+            if (selectedSkill) {
+                addSkillWithLevel(selectedSkill, nivel);
+                closeNivelModal();
+            }
+        });
+    });
+});
+
+function addSkillWithLevel(skillName, nivel) {
+    fetch('/perfil/habilidade', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            nome: skillName,
+            nivel: nivel
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const skillItem = Array.from(document.querySelectorAll('.skill-item'))
+                .find(item => item.textContent.trim() === skillName);
+            if (skillItem) {
+                skillItem.classList.add('selected');
+            }
+            
+            const container = document.getElementById('skillsContainer');
+            const skillTag = document.createElement('div');
+            skillTag.className = 'skill-tag';
+            skillTag.setAttribute('data-skill-id', data.skill.id);
+            skillTag.innerHTML = `
+                ${skillName}
+                <span class="skill-level">${nivel}</span>
+                <span class="remove-skill" onclick="removeSkill(${data.skill.id})">
+                    <i class="fas fa-times"></i>
+                </span>
+            `;
+            container.appendChild(skillTag);
         }
     });
+}
 
-    // Função para adicionar habilidade personalizada
-    window.addSkill = function() {
-        const input = document.getElementById('skillInput');
-        const skillName = input.value.trim();
-        if (skillName) {
-            fetch('/perfil/habilidade', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    nome: skillName,
-                    nivel: 'Intermediário'
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const container = document.getElementById('skillsContainer');
-                    const skillTag = document.createElement('div');
-                    skillTag.className = 'skill-tag';
-                    skillTag.setAttribute('data-skill-id', data.skill.id);
-                    skillTag.textContent = skillName;
-                    container.appendChild(skillTag);
-                    input.value = '';
-                }
-            });
+function removeSkill(skillId) {
+    fetch(`/perfil/habilidade/${skillId}`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
         }
-    }
-});
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const skillTag = document.querySelector(`.skill-tag[data-skill-id="${skillId}"]`);
+            if (skillTag) {
+                const skillName = skillTag.textContent.trim().split(' - ')[0];
+                const skillItem = Array.from(document.querySelectorAll('.skill-item'))
+                    .find(item => item.textContent.trim() === skillName);
+                if (skillItem) {
+                    skillItem.classList.remove('selected');
+                }
+                skillTag.remove();
+            }
+        }
+    });
+}
 
 // Função para pré-visualizar a imagem
 function previewImage(input) {
