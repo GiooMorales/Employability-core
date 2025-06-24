@@ -219,7 +219,7 @@ class PerfilController extends Controller
             }
         }
 
-        return view('perfil', compact('usuario', 'habilidades', 'experiencias', 'formacoes', 'estatisticas', 'statusConexao'));
+        return view('perfil', compact('usuario', 'habilidades', 'experiencias', 'formacoes', 'estatisticas', 'statusConexao', 'connection'));
     }
 
     public function mostrarConexoes()

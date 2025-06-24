@@ -41,4 +41,20 @@ class ConnectionController extends Controller
 
         return redirect()->back()->with('success', 'Conexão recusada!');
     }
+
+    
+public function destroy($id)
+{
+    $connection = Connection::findOrFail($id);
+
+    // Verifica se o usuário tem permissão para excluir essa conexão
+    if (auth()->id() !== $connection->user_id && auth()->id() !== $connection->connection_id) {
+        return redirect()->back()->with('error', 'Acesso negado.');
+    }
+
+    $connection->delete();
+
+    return redirect()->back()->with('success', 'Conexão removida com sucesso.');
+}
+
 } 

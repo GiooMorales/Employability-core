@@ -85,4 +85,5 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/{id}/accept-connection', [NotificationController::class, 'acceptConnection'])->name('notifications.acceptConnection');
     Route::post('/notifications/{id}/reject-connection', [NotificationController::class, 'rejectConnection'])->name('notifications.rejectConnection');
     Route::get('/notifications/recent-unread', [NotificationController::class, 'getRecentUnread'])->name('notifications.recentUnread');
+    Route::delete('/connections/{id}', [ConnectionController::class, 'destroy'])->name('connections.destroy');
 });
