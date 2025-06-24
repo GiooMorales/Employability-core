@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('usuarios', 'id_usuarios')->onDelete('cascade');
             $table->string('nome');
             $table->timestamps();
+        });
     }
 
     /**
@@ -23,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
-    
+        Schema::dropIfExists('experiencias_profissionais');
     }
-}
 };

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('formacoes', function (Blueprint $table) {
             $table->id('id_formacoes');
-            $table->foreignId('usuario_id')->constrained('usuarios', 'id_usuarios')->onDelete('cascade');
+            $table->foreignId('id_usuario')->constrained('usuarios', 'id_usuarios')->onDelete('cascade');
             $table->string('instituicao');
             $table->string('curso');
             $table->date('data_inicio');

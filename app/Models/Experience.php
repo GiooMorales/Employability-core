@@ -12,7 +12,7 @@ class Experience extends Model
     protected $table = 'experiencias_profissionais';
 
     protected $fillable = [
-        'usuario_id',
+        'id_usuario',
         'cargo',
         'empresa_nome',
         'descricao',
@@ -22,6 +22,6 @@ class Experience extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'usuario_id', 'id_usuarios');
+        return $this->belongsTo(User::class, 'id_usuario', 'id_usuarios');
     }
 } 

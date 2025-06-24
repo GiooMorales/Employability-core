@@ -76,4 +76,24 @@ class NotificationController extends Controller
         
         return response()->json(['success' => false, 'message' => 'Notificação inválida']);
     }
+
+    /**
+     * Retorna as últimas notificações não lidas (limitadas).
+     */
+    public function getRecentUnread()
+    {
+        $user = Auth::user();
+        $notifications = $user->unreadNotifications()->latest()->take(5)->get();
+        return response()->json([
+            'notifications' => $notifications->map(function($notification) {
+                return [
+                    'id' => $notification->id,
+                    'message' => $notification->data['message'] ?? '',
+                    'created_at' => $notification->created_at->diffForHumans(),
+                    'from_user_avatar' => $notification->data['from_user_avatar'] ?? null,
+                    'from_user_name' => $notification->data['from_user_name'] ?? null,
+                ];
+            })
+        ]);
+    }
 }

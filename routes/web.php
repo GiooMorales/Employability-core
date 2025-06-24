@@ -84,4 +84,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unreadCount');
     Route::post('/notifications/{id}/accept-connection', [NotificationController::class, 'acceptConnection'])->name('notifications.acceptConnection');
     Route::post('/notifications/{id}/reject-connection', [NotificationController::class, 'rejectConnection'])->name('notifications.rejectConnection');
+    Route::get('/notifications/recent-unread', [NotificationController::class, 'getRecentUnread'])->name('notifications.recentUnread');
 });
