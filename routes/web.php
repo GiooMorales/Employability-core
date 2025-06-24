@@ -10,6 +10,7 @@ use App\Http\Controllers\CertificadoController;
 use App\Http\Controllers\RepositorioController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ConnectionController;
+use App\Http\Controllers\NotificationController;
 
 // Rota raiz
 Route::get('/', function () {
@@ -75,4 +76,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/connections/send/{userId}', [ConnectionController::class, 'send'])->name('connections.send');
     Route::post('/connections/accept/{connectionId}', [ConnectionController::class, 'accept'])->name('connections.accept');
     Route::post('/connections/reject/{connectionId}', [ConnectionController::class, 'reject'])->name('connections.reject');
+    
+    // Rotas para Notificações
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unreadCount');
+    Route::post('/notifications/{id}/accept-connection', [NotificationController::class, 'acceptConnection'])->name('notifications.acceptConnection');
+    Route::post('/notifications/{id}/reject-connection', [NotificationController::class, 'rejectConnection'])->name('notifications.rejectConnection');
 });

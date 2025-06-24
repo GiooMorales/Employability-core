@@ -12,7 +12,7 @@
             <span>Sobre mim</span>
         </div>
         <div class="about-item-content">
-            {{ $usuario->bio ?? 'Adicione uma descrição sobre você.' }}
+            {{ $usuario->sobre ?? 'Adicione uma descrição sobre você.' }}
         </div>
     </div>
 
@@ -22,9 +22,15 @@
         </div>
         <div class="skills-container">
             @forelse($habilidades ?? [] as $habilidade)
+                @php
+                    $softSkills = ['Comunicação', 'Trabalho em Equipe', 'Liderança', 'Resolução de Problemas', 'Gestão de Tempo', 'Adaptabilidade', 'Criatividade', 'Pensamento Crítico'];
+                    $isSoftSkill = in_array($habilidade->nome, $softSkills);
+                @endphp
                 <div class="skill-tag">
                     {{ $habilidade->nome }}
-                    <span class="skill-level">{{ $habilidade->nivel }}</span>
+                    @if(!$isSoftSkill)
+                        <span class="skill-level">{{ $habilidade->nivel }}</span>
+                    @endif
                 </div>
             @empty
                 <p>Nenhuma habilidade cadastrada.</p>

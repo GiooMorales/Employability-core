@@ -16,7 +16,7 @@ class SobreController extends Controller
         public function show($id)
         {
             $users = User::findOrFail($id);
-            $bio = $users->bio;
+            $sobre = $users->sobre;
             $statusConexao = null;
     
             if (auth()->check()) {
@@ -29,7 +29,7 @@ class SobreController extends Controller
             }
     
             return view('sobre', [
-                'bio' => $users->bio,
+                'sobre' => $users->sobre,
 
        
         ]);

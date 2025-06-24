@@ -14,9 +14,10 @@ class Usuario extends Model
 
     protected $fillable = [
         'nome',
+        'titulo',
         'email',
         'senha',
-        'bio',
+        'sobre',
         'cidade',
         'estado',
         'pais',
@@ -31,7 +32,8 @@ class Usuario extends Model
         'perfil_publico',
         'disponivel_para_contato',
         'link',
-        'url_foto'
+        'url_foto',
+        'quantidade_conn'
     ];
 
     protected $hidden = [
@@ -61,4 +63,20 @@ class Usuario extends Model
                !empty($this->cargo_atual) && 
                !empty($this->habilidades);
     }
+
+    public function connections()
+{
+    return $this->hasMany(Connection::class, 'user_id')->where('status', 'aprovado');
+}
+
+public function connectedWith()
+{
+    return $this->hasMany(Connection::class, 'connection_id')->where('status', 'aprovado');
+}
+
+public function todasConexoes()
+{
+    return $this->connections->merge($this->connectedWith());
+}
+
 } 

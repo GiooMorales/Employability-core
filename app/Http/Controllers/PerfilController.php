@@ -27,7 +27,7 @@ class PerfilController extends Controller
         $formacoes = $usuario->education;
         
         $estatisticas = [
-            'conexoes' => $usuario->connections()->where('status', 'aceita')->count(),
+            'conexoes' => $usuario->quantidade_conn ?? 0,
             'projetos' => $usuario->projects()->count(),
             'certificados' => $usuario->certificates()->count(),
             'contribuicoes' => 0 // TODO: Implementar contagem de contribuições
@@ -51,8 +51,8 @@ class PerfilController extends Controller
         
         $validated = $request->validate([
             'nome' => 'required|string|max:255',
-            'profissao' => 'nullable|string|max:100',
-            'bio' => 'nullable|string',
+            'titulo' => 'nullable|string|max:100',
+            'sobre' => 'nullable|string',
             'cidade' => 'nullable|string|max:100',
             'estado' => 'nullable|string|max:100',
             'pais' => 'nullable|string|max:100',
@@ -202,7 +202,7 @@ class PerfilController extends Controller
         $formacoes = $usuario->education;
         
         $estatisticas = [
-            'conexoes' => 0, // TODO: Implementar contagem de conexões
+            'conexoes' => $usuario->quantidade_conn ?? 0,
             'projetos' => $usuario->projects()->count(),
             'certificados' => $usuario->certificates()->count(),
             'contribuicoes' => 0 // TODO: Implementar contagem de contribuições
@@ -221,4 +221,12 @@ class PerfilController extends Controller
 
         return view('perfil', compact('usuario', 'habilidades', 'experiencias', 'formacoes', 'estatisticas', 'statusConexao'));
     }
+
+    public function mostrarConexoes()
+    {
+        $usuario = auth()->user();
+        $quantidade_conn = $usuario->todasConexoes()->count();
+    
+        return view('perfil', compact('usuario', 'quantidade_conn'));
+    } 
 }

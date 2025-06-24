@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Connection;
+use App\Models\User;
+use App\Notifications\ConnectionRequestNotification;
 use Illuminate\Http\Request;
 
 class ConnectionController extends Controller
@@ -14,6 +16,10 @@ class ConnectionController extends Controller
         $connection->connected_user_id = $userId;
         $connection->status = 'pendente';
         $connection->save();
+
+        // Enviar notificação para o usuário que recebeu a solicitação
+        $targetUser = User::find($userId);
+        $targetUser->notify(new ConnectionRequestNotification(auth()->user(), $connection->id));
 
         return redirect()->back()->with('success', 'Solicitação de conexão enviada!');
     }

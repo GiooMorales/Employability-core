@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <div class="search-result-info">
                                         <div class="search-result-name">${user.nome}</div>
                                         <div class="search-result-details">
-                                            ${user.profissao ? user.profissao + ' • ' : ''}
+                                            ${user.titulo ? user.titulo + ' • ' : ''}
                                             ${user.cidade ? user.cidade + ', ' : ''}
                                             ${user.estado || ''}
                                         </div>
