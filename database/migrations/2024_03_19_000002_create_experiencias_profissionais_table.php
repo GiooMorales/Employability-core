@@ -19,9 +19,9 @@ return new class extends Migration
             $table->date('data_fim')->nullable();
             $table->timestamps();
             $table->string('tipo', 50)->nullable();
-        $table->string('modalidade', 50)->nullable();
-        $table->text('conquistas')->nullable();
-        $table->boolean('atual')->default(false);
+            $table->string('modalidade', 50)->nullable();
+            $table->text('conquistas')->nullable();
+            $table->boolean('atual')->default(false);
         });
     }
 

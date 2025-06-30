@@ -158,17 +158,67 @@
                             Experiências Profissionais
                         </div>
                         <div class="section-content">
-                            <div id="experienciasContainer">
-                                <!-- Experiências serão adicionadas aqui -->
+                            <div id="experiencias-list">
+                                <!-- Cards de experiências serão renderizados aqui -->
                             </div>
-                            
-                            <button type="button" class="add-experience-btn" onclick="adicionarExperiencia()">
-    + Adicionar Experiência Profissional
-</button>
-
-                            <div class="actions">
-                                <button class="btn btn-secondary" onclick="renderizarExperiencias()">Cancelar</button>
-                                <button class="btn btn-primary" onclick="salvarExperiencias()">Salvar Alterações</button>
+                            <hr style="margin: 30px 0;">
+                            <div id="nova-experiencia-form" class="experience-form">
+                                <h4>Adicionar Nova Experiência</h4>
+                                <div class="form-row">
+                                    <div class="form-col">
+                                        <label>Cargo *</label>
+                                        <input type="text" id="novo-cargo" class="form-input">
+                                    </div>
+                                    <div class="form-col">
+                                        <label>Empresa *</label>
+                                        <input type="text" id="novo-empresa" class="form-input">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-col">
+                                        <label>Tipo de Contrato</label>
+                                        <select id="novo-tipo" class="form-input">
+                                            <option value="">Selecione...</option>
+                                            <option value="clt">CLT</option>
+                                            <option value="pj">PJ</option>
+                                            <option value="freelancer">Freelancer</option>
+                                            <option value="estagio">Estágio</option>
+                                            <option value="trainee">Trainee</option>
+                                            <option value="voluntario">Voluntário</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-col">
+                                        <label>Modalidade</label>
+                                        <select id="novo-modalidade" class="form-input">
+                                            <option value="">Selecione...</option>
+                                            <option value="presencial">Presencial</option>
+                                            <option value="remoto">Remoto</option>
+                                            <option value="hibrido">Híbrido</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-col">
+                                        <label>Data de Início *</label>
+                                        <input type="date" id="novo-data-inicio" class="form-input">
+                                    </div>
+                                    <div class="form-col">
+                                        <label>Data de Término</label>
+                                        <input type="date" id="novo-data-fim" class="form-input">
+                                        <div style="margin-top: 5px;">
+                                            <input type="checkbox" id="novo-atual"> <label for="novo-atual">Trabalho aqui atualmente</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Descrição das Atividades *</label>
+                                    <textarea id="novo-descricao" class="form-textarea" maxlength="500"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Principais Conquistas</label>
+                                    <textarea id="novo-conquistas" class="form-textarea" maxlength="300"></textarea>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="adicionarExperienciaAjax()">Adicionar Experiência</button>
                             </div>
                         </div>
                     </div>
@@ -605,6 +655,181 @@ function salvarExperiencias() {
 document.querySelector('form').addEventListener('submit', function(e) {
     document.getElementById('experiencias_json').value = JSON.stringify(experiencias);
 });
+
+// Inicialização: carregar experiências do backend
+window.experiencias = @json($user->experiences()->get());
+document.addEventListener('DOMContentLoaded', renderizarExperienciasAjax);
+
+// Função para adicionar experiência via AJAX
+function adicionarExperienciaAjax() {
+    console.log('Função adicionarExperienciaAjax chamada');
+    alert('Função adicionarExperienciaAjax chamada!');
+    const data = {
+        cargo: document.getElementById('novo-cargo').value,
+        empresa_nome: document.getElementById('novo-empresa').value,
+        tipo: document.getElementById('novo-tipo').value,
+        modalidade: document.getElementById('novo-modalidade').value,
+        data_inicio: document.getElementById('novo-data-inicio').value,
+        data_fim: document.getElementById('novo-data-fim').value,
+        atual: document.getElementById('novo-atual').checked ? 1 : 0,
+        descricao: document.getElementById('novo-descricao').value,
+        conquistas: document.getElementById('novo-conquistas').value,
+        _token: '{{ csrf_token() }}'
+    };
+    fetch('/perfil/experiencia', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': data._token},
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(resp => {
+        if (resp.success) {
+            document.getElementById('novo-cargo').value = '';
+            document.getElementById('novo-empresa').value = '';
+            document.getElementById('novo-tipo').value = '';
+            document.getElementById('novo-modalidade').value = '';
+            document.getElementById('novo-data-inicio').value = '';
+            document.getElementById('novo-data-fim').value = '';
+            document.getElementById('novo-atual').checked = false;
+            document.getElementById('novo-descricao').value = '';
+            document.getElementById('novo-conquistas').value = '';
+            window.experiencias.push(resp.experience);
+            renderizarExperienciasAjax();
+        } else {
+            if(resp.errors) {
+                alert('Erro ao adicionar experiência: ' + Object.values(resp.errors).join('\n'));
+            } else {
+                alert('Erro ao adicionar experiência!');
+            }
+        }
+    });
+}
+
+// Função para renderizar cards de experiências
+function renderizarExperienciasAjax() {
+    console.log('Renderizando cards', window.experiencias);
+    const experiencias = window.experiencias || [];
+    const container = document.getElementById('experiencias-list');
+    container.innerHTML = '';
+    experiencias.forEach(exp => {
+        container.innerHTML += `
+        <div class=\"experience-item\" style=\"background: #f8f9fa; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); padding: 18px 20px; margin-bottom: 18px;\">\n            <div style=\"display: flex; justify-content: space-between; align-items: center;\">\n                <div>\n                    <div style=\"font-weight: bold; font-size: 18px; color: #0a66c2;\">${exp.empresa_nome}</div>\n                    <div style=\"font-size: 16px; color: #333;\">${exp.cargo}</div>\n                    <div style=\"font-size: 14px; color: #666; margin-top: 2px;\">\n                        ${exp.data_inicio ? new Date(exp.data_inicio).toLocaleDateString('pt-BR', {month: 'short', year: 'numeric'}) : ''} -\n                        ${exp.atual ? 'Presente' : (exp.data_fim ? new Date(exp.data_fim).toLocaleDateString('pt-BR', {month: 'short', year: 'numeric'}) : '---')}\n                    </div>\n                    <div style=\"margin-top: 8px; color: #444;\"><strong>Descrição:</strong> ${exp.descricao}</div>\n                    ${exp.conquistas ? `<div style='margin-top: 8px; color: #444;'><strong>Conquistas:</strong> ${exp.conquistas}</div>` : ''}\n                    <div style=\"margin-top: 8px;\">\n                        ${exp.tipo ? `<span style='background: #e0e7ef; color: #0a66c2; border-radius: 12px; padding: 4px 12px; font-size: 13px; margin-right: 5px;'>${exp.tipo}</span>` : ''}\n                        ${exp.modalidade ? `<span style='background: #e0e7ef; color: #0a66c2; border-radius: 12px; padding: 4px 12px; font-size: 13px;'>${exp.modalidade}</span>` : ''}\n                    </div>\n                </div>\n                <div>\n                    <button class=\"btn btn-secondary\" onclick=\"editarExperienciaForm(${exp.id_experiencias_profissionais})\">Editar</button>\n                    <button class=\"btn btn-danger\" onclick=\"removerExperienciaAjax(${exp.id_experiencias_profissionais})\">Remover</button>\n                </div>\n            </div>\n            <div id=\"editar-exp-form-${exp.id_experiencias_profissionais}\" style=\"display:none; margin-top: 15px;\"></div>\n        </div>`;
+    });
+}
+
+// Função para remover experiência via AJAX
+function removerExperienciaAjax(id) {
+    fetch(`/perfil/experiencia/${id}`, {
+        method: 'DELETE',
+        headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'},
+    })
+    .then(response => response.json())
+    .then(resp => {
+        if (resp.success) {
+            window.experiencias = window.experiencias.filter(exp => exp.id_experiencias_profissionais !== id);
+            renderizarExperienciasAjax();
+        } else {
+            alert('Erro ao remover experiência!');
+        }
+    });
+}
+
+// Função para exibir formulário de edição
+function editarExperienciaForm(id) {
+    const exp = window.experiencias.find(e => e.id_experiencias_profissionais === id);
+    const formDiv = document.getElementById(`editar-exp-form-${id}`);
+    if (!exp) return;
+    formDiv.innerHTML = `
+        <div class='experience-form'>
+            <div class="form-row">
+                <div class="form-col">
+                    <label>Cargo *</label>
+                    <input type="text" id="edit-cargo-${id}" class="form-input" value="${exp.cargo}">
+                </div>
+                <div class="form-col">
+                    <label>Empresa *</label>
+                    <input type="text" id="edit-empresa-${id}" class="form-input" value="${exp.empresa_nome}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-col">
+                    <label>Tipo de Contrato</label>
+                    <select id="edit-tipo-${id}" class="form-input">
+                        <option value="">Selecione...</option>
+                        <option value="clt" ${exp.tipo === 'clt' ? 'selected' : ''}>CLT</option>
+                        <option value="pj" ${exp.tipo === 'pj' ? 'selected' : ''}>PJ</option>
+                        <option value="freelancer" ${exp.tipo === 'freelancer' ? 'selected' : ''}>Freelancer</option>
+                        <option value="estagio" ${exp.tipo === 'estagio' ? 'selected' : ''}>Estágio</option>
+                        <option value="trainee" ${exp.tipo === 'trainee' ? 'selected' : ''}>Trainee</option>
+                        <option value="voluntario" ${exp.tipo === 'voluntario' ? 'selected' : ''}>Voluntário</option>
+                    </select>
+                </div>
+                <div class="form-col">
+                    <label>Modalidade</label>
+                    <select id="edit-modalidade-${id}" class="form-input">
+                        <option value="">Selecione...</option>
+                        <option value="presencial" ${exp.modalidade === 'presencial' ? 'selected' : ''}>Presencial</option>
+                        <option value="remoto" ${exp.modalidade === 'remoto' ? 'selected' : ''}>Remoto</option>
+                        <option value="hibrido" ${exp.modalidade === 'hibrido' ? 'selected' : ''}>Híbrido</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-col">
+                    <label>Data de Início *</label>
+                    <input type="date" id="edit-data-inicio-${id}" class="form-input" value="${exp.data_inicio}">
+                </div>
+                <div class="form-col">
+                    <label>Data de Término</label>
+                    <input type="date" id="edit-data-fim-${id}" class="form-input" value="${exp.data_fim ?? ''}">
+                    <div style="margin-top: 5px;">
+                        <input type="checkbox" id="edit-atual-${id}" ${exp.atual ? 'checked' : ''}> <label for="edit-atual-${id}">Trabalho aqui atualmente</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Descrição das Atividades *</label>
+                <textarea id="edit-descricao-${id}" class="form-textarea" maxlength="500">${exp.descricao}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Principais Conquistas</label>
+                <textarea id="edit-conquistas-${id}" class="form-textarea" maxlength="300">${exp.conquistas ?? ''}</textarea>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="salvarEdicaoExperienciaAjax(${id})">Salvar Alterações</button>
+            <button type="button" class="btn btn-secondary" onclick="formDiv.innerHTML = ''">Cancelar</button>
+        </div>
+    `;
+    formDiv.style.display = 'block';
+}
+
+// Função para salvar edição via AJAX
+function salvarEdicaoExperienciaAjax(id) {
+    const data = {
+        cargo: document.getElementById(`edit-cargo-${id}`).value,
+        empresa_nome: document.getElementById(`edit-empresa-${id}`).value,
+        tipo: document.getElementById(`edit-tipo-${id}`).value,
+        modalidade: document.getElementById(`edit-modalidade-${id}`).value,
+        data_inicio: document.getElementById(`edit-data-inicio-${id}`).value,
+        data_fim: document.getElementById(`edit-data-fim-${id}`).value,
+        atual: document.getElementById(`edit-atual-${id}`).checked ? 1 : 0,
+        descricao: document.getElementById(`edit-descricao-${id}`).value,
+        conquistas: document.getElementById(`edit-conquistas-${id}`).value,
+        _token: '{{ csrf_token() }}'
+    };
+    fetch(`/perfil/experiencia/${id}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': data._token},
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(resp => {
+        if (resp.success) {
+            renderizarExperienciasAjax();
+        } else {
+            alert('Erro ao editar experiência!');
+        }
+    });
+}
 </script>
 @endsection
 

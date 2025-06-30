@@ -37,18 +37,34 @@
             <span>Experiência</span>
         </div>
         @forelse($experiencias ?? [] as $experiencia)
-            <div class="experience-item">
-                <div class="experience-header">
-                    <img src="{{ $experiencia->logo ?? '/api/placeholder/32/32' }}" alt="{{ $experiencia->empresa }}" class="experience-logo">
-                    <div>
-                        <div class="experience-company">{{ $experiencia->empresa }}</div>
-                        <div class="experience-position">{{ $experiencia->cargo }}</div>
-                        <div class="experience-period">{{ $experiencia->data_inicio->format('M Y') }} - {{ $experiencia->data_fim ? $experiencia->data_fim->format('M Y') : 'Presente' }}</div>
+            <div class="experience-item" style="margin-bottom: 25px; background: #f8f9fa; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); padding: 18px 20px;">
+                <div class="experience-header" style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <div style="flex:1;">
+                        <div class="experience-company" style="font-weight: bold; font-size: 18px; color: #0a66c2;">{{ $experiencia->empresa_nome }}</div>
+                        <div class="experience-position" style="font-size: 16px; color: #333;">{{ $experiencia->cargo }}</div>
+                        <div class="experience-period" style="font-size: 14px; color: #666; margin-top: 2px;">
+                            {{ $experiencia->data_inicio ? $experiencia->data_inicio->format('M/Y') : '' }}
+                            -
+                            {{ $experiencia->atual ?? false ? 'Presente' : ($experiencia->data_fim ? $experiencia->data_fim->format('M/Y') : '---') }}
+                        </div>
+                    </div>
+                    <div style="margin-left: 20px; text-align: right;">
+                        @if(!empty($experiencia->tipo))
+                            <span style="display: inline-block; background: #e0e7ef; color: #0a66c2; border-radius: 12px; padding: 4px 12px; font-size: 13px; margin-bottom: 4px;">{{ ucfirst($experiencia->tipo) }}</span><br>
+                        @endif
+                        @if(!empty($experiencia->modalidade))
+                            <span style="display: inline-block; background: #e0e7ef; color: #0a66c2; border-radius: 12px; padding: 4px 12px; font-size: 13px;">{{ ucfirst($experiencia->modalidade) }}</span>
+                        @endif
                     </div>
                 </div>
-                <div class="experience-description">
-                    {{ $experiencia->descricao }}
+                <div class="experience-description" style="margin-top: 10px; color: #444;">
+                    <strong>Descrição:</strong> {{ $experiencia->descricao }}
                 </div>
+                @if(!empty($experiencia->conquistas))
+                <div class="experience-achievements" style="margin-top: 8px; color: #444;">
+                    <strong>Conquistas:</strong> {{ $experiencia->conquistas }}
+                </div>
+                @endif
             </div>
         @empty
             <p>Nenhuma experiência cadastrada.</p>

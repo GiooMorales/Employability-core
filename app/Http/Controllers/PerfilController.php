@@ -246,4 +246,63 @@ class PerfilController extends Controller
 
         return view('perfil', compact('usuario', 'habilidades', 'experiencias', 'formacoes', 'estatisticas', 'statusConexao'));
     }
+
+    // Adicionar experiência profissional via AJAX
+    public function addExperience(Request $request)
+    {
+        \Log::info('addExperience chamado', $request->all());
+        $validated = $request->validate([
+            'cargo' => 'required|string|max:100',
+            'empresa_nome' => 'required|string|max:100',
+            'descricao' => 'required|string',
+            'data_inicio' => 'required|date',
+            'data_fim' => 'nullable|date',
+            'tipo' => 'nullable|string|max:50',
+            'modalidade' => 'nullable|string|max:50',
+            'conquistas' => 'nullable|string',
+            'atual' => 'nullable|boolean',
+        ]);
+        $user = Auth::user();
+        $validated['usuario_id'] = $user->id_usuarios;
+        $exp = \App\Models\Experience::create($validated);
+        \Log::info('Experiência criada:', $exp->toArray());
+        return response()->json(['success' => true, 'experience' => $exp]);
+    }
+
+    // Editar experiência profissional via AJAX
+    public function updateExperience(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'cargo' => 'required|string|max:100',
+            'empresa_nome' => 'required|string|max:100',
+            'descricao' => 'required|string',
+            'data_inicio' => 'required|date',
+            'data_fim' => 'nullable|date',
+            'tipo' => 'nullable|string|max:50',
+            'modalidade' => 'nullable|string|max:50',
+            'conquistas' => 'nullable|string',
+            'atual' => 'nullable|boolean',
+        ]);
+        $user = Auth::user();
+        $exp = $user->experiences()->findOrFail($id);
+        $exp->update($validated);
+        return response()->json(['success' => true, 'experience' => $exp]);
+    }
+
+    // Remover experiência profissional via AJAX
+    public function deleteExperience($id)
+    {
+        $user = Auth::user();
+        $exp = $user->experiences()->findOrFail($id);
+        $exp->delete();
+        return response()->json(['success' => true]);
+    }
+
+    // Retornar experiências profissionais do usuário autenticado em JSON
+    public function experienciasJson()
+    {
+        $user = Auth::user();
+        $experiencias = $user->experiences()->orderByDesc('data_inicio')->get();
+        return response()->json(['experiencias' => $experiencias]);
+    }
 }

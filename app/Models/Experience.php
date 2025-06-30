@@ -17,7 +17,11 @@ class Experience extends Model
         'empresa_nome',
         'descricao',
         'data_inicio',
-        'data_fim'
+        'data_fim',
+        'tipo',
+        'modalidade',
+        'conquistas',
+        'atual',
     ];
 
     protected $casts = [

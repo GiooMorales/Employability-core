@@ -34,7 +34,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/perfil', [PerfilController::class, 'deleteAccount'])->name('profile.delete');
     
     // Rotas para adicionar itens ao perfil
-    Route::post('/perfil/experiencia', [PerfilController::class, 'addExperience'])->name('profile.experience');
+    Route::post('/perfil/experiencia', [PerfilController::class, 'addExperience'])->name('profile.experience.add');
+    Route::put('/perfil/experiencia/{id}', [PerfilController::class, 'updateExperience'])->name('profile.experience.update');
+    Route::delete('/perfil/experiencia/{id}', [PerfilController::class, 'deleteExperience'])->name('profile.experience.delete');
     Route::post('/perfil/educacao', [PerfilController::class, 'addEducation'])->name('profile.education');
     Route::post('/perfil/projeto', [PerfilController::class, 'addProject'])->name('profile.project');
     Route::post('/perfil/certificado', [PerfilController::class, 'addCertificate'])->name('profile.certificate');
@@ -75,4 +77,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/connections/send/{userId}', [ConnectionController::class, 'send'])->name('connections.send');
     Route::post('/connections/accept/{connectionId}', [ConnectionController::class, 'accept'])->name('connections.accept');
     Route::post('/connections/reject/{connectionId}', [ConnectionController::class, 'reject'])->name('connections.reject');
+
+    Route::get('/perfil/experiencias-json', [PerfilController::class, 'experienciasJson'])->name('profile.experience.json');
 });
