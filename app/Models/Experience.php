@@ -29,6 +29,8 @@ class Experience extends Model
         'data_fim' => 'date',
     ];
 
+    protected $primaryKey = 'id_experiencias_profissionais';
+
     public function user()
     {
         return $this->belongsTo(User::class, 'usuario_id', 'id_usuarios');
