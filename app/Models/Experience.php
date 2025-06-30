@@ -20,6 +20,11 @@ class Experience extends Model
         'data_fim'
     ];
 
+    protected $casts = [
+        'data_inicio' => 'date',
+        'data_fim' => 'date',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'usuario_id', 'id_usuarios');

@@ -152,7 +152,29 @@
                         </div>
                     </div>
 
+                    <!-- Experiências Profissionais -->
+                    <div class="section-card">
+                        <div class="section-header">
+                            Experiências Profissionais
+                        </div>
+                        <div class="section-content">
+                            <div id="experienciasContainer">
+                                <!-- Experiências serão adicionadas aqui -->
+                            </div>
+                            
+                            <button type="button" class="add-experience-btn" onclick="adicionarExperiencia()">
+    + Adicionar Experiência Profissional
+</button>
+
+                            <div class="actions">
+                                <button class="btn btn-secondary" onclick="renderizarExperiencias()">Cancelar</button>
+                                <button class="btn btn-primary" onclick="salvarExperiencias()">Salvar Alterações</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-actions">
+                        <input type="hidden" name="experiencias_json" id="experiencias_json">
                         <a href="{{ route('perfil') }}" class="btn btn-outline">Cancelar</a>
                         <button type="submit" class="btn btn-primary">Salvar Alterações</button>
                     </div>
@@ -175,7 +197,11 @@
             <button class="btn btn-outline" onclick="closeNivelModal()">Cancelar</button>
         </div>
     </div>
+
+    
 </div>
+
+
 
 <style>
 .modal {
@@ -248,6 +274,8 @@
 @section('scripts')
 <script>
 let selectedSkill = null;
+let contadorExperiencias = 0;
+let experiencias = [];
 
 function showNivelModal(skillName) {
     selectedSkill = skillName;
@@ -403,6 +431,180 @@ function removePhoto() {
         });
     }
 }
+
+function adicionarExperiencia() {
+    contadorExperiencias++;
+    const experiencia = {
+        id: contadorExperiencias,
+        cargo: '',
+        empresa: '',
+        tipo: '',
+        modalidade: '',
+        dataInicio: '',
+        dataFim: '',
+        atual: false,
+        descricao: '',
+        conquistas: ''
+    };
+    
+    experiencias.push(experiencia);
+    renderizarExperiencias();
+}
+
+function removerExperiencia(id) {
+    experiencias = experiencias.filter(exp => exp.id !== id);
+    renderizarExperiencias();
+}
+
+function renderizarExperiencias() {
+    const container = document.getElementById('experienciasContainer');
+    container.innerHTML = '';
+
+    experiencias.forEach(exp => {
+        const experienciaHtml = `
+            <div class="experience-item" data-id="${exp.id}">
+                <button class="remove-btn" onclick="removerExperiencia(${exp.id})" title="Remover experiência">×</button>
+                
+                <div class="experience-header">
+                    <div class="experience-title">
+                        ${exp.cargo || 'Nova Experiência'} ${exp.empresa ? `- ${exp.empresa}` : ''}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <label>Cargo/Função *</label>
+                        <input type="text" 
+                               value="${exp.cargo}" 
+                               onchange="atualizarExperiencia(${exp.id}, 'cargo', this.value)"
+                               placeholder="Ex: Desenvolvedor Full Stack">
+                    </div>
+                    <div class="form-col">
+                        <label>Empresa *</label>
+                        <input type="text" 
+                               value="${exp.empresa}" 
+                               onchange="atualizarExperiencia(${exp.id}, 'empresa', this.value)"
+                               placeholder="Ex: Tech Solutions Ltda">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <label>Tipo de Contrato</label>
+                        <select onchange="atualizarExperiencia(${exp.id}, 'tipo', this.value)">
+                            <option value="">Selecione...</option>
+                            <option value="clt" ${exp.tipo === 'clt' ? 'selected' : ''}>CLT</option>
+                            <option value="pj" ${exp.tipo === 'pj' ? 'selected' : ''}>PJ</option>
+                            <option value="freelancer" ${exp.tipo === 'freelancer' ? 'selected' : ''}>Freelancer</option>
+                            <option value="estagio" ${exp.tipo === 'estagio' ? 'selected' : ''}>Estágio</option>
+                            <option value="trainee" ${exp.tipo === 'trainee' ? 'selected' : ''}>Trainee</option>
+                            <option value="voluntario" ${exp.tipo === 'voluntario' ? 'selected' : ''}>Voluntário</option>
+                        </select>
+                    </div>
+                    <div class="form-col">
+                        <label>Modalidade</label>
+                        <select onchange="atualizarExperiencia(${exp.id}, 'modalidade', this.value)">
+                            <option value="">Selecione...</option>
+                            <option value="presencial" ${exp.modalidade === 'presencial' ? 'selected' : ''}>Presencial</option>
+                            <option value="remoto" ${exp.modalidade === 'remoto' ? 'selected' : ''}>Remoto</option>
+                            <option value="hibrido" ${exp.modalidade === 'hibrido' ? 'selected' : ''}>Híbrido</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <label>Data de Início *</label>
+                        <input type="date" 
+                               value="${exp.dataInicio}" 
+                               onchange="atualizarExperiencia(${exp.id}, 'dataInicio', this.value)">
+                    </div>
+                    <div class="form-col">
+                        <label>Data de Término</label>
+                        <input type="date" 
+                               value="${exp.dataFim}" 
+                               ${exp.atual ? 'disabled' : ''}
+                               onchange="atualizarExperiencia(${exp.id}, 'dataFim', this.value)">
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" 
+                                       ${exp.atual ? 'checked' : ''}
+                                       onchange="toggleAtual(${exp.id}, this.checked)">
+                                <label>Trabalho aqui atualmente</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição das Atividades *</label>
+                    <textarea placeholder="Descreva suas principais responsabilidades e atividades realizadas..."
+                              onchange="atualizarExperiencia(${exp.id}, 'descricao', this.value)">${exp.descricao}</textarea>
+                    <div class="help-text">Máximo de 500 caracteres</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Principais Conquistas</label>
+                    <textarea placeholder="Descreva suas principais conquistas e resultados alcançados..."
+                              onchange="atualizarExperiencia(${exp.id}, 'conquistas', this.value)">${exp.conquistas}</textarea>
+                    <div class="help-text">Máximo de 300 caracteres</div>
+                </div>
+            </div>
+        `;
+        container.innerHTML += experienciaHtml;
+    });
+}
+
+function atualizarExperiencia(id, campo, valor) {
+    const experiencia = experiencias.find(exp => exp.id === id);
+    if (experiencia) {
+        experiencia[campo] = valor;
+        if (campo === 'cargo' || campo === 'empresa') {
+            renderizarExperiencias(); // Re-renderizar para atualizar o título
+        }
+    }
+}
+
+function toggleAtual(id, atual) {
+    const experiencia = experiencias.find(exp => exp.id === id);
+    if (experiencia) {
+        experiencia.atual = atual;
+        if (atual) {
+            experiencia.dataFim = '';
+        }
+        renderizarExperiencias();
+    }
+}
+
+function salvarExperiencias() {
+    // Validação básica
+    const experienciasInvalidas = experiencias.filter(exp => 
+        !exp.cargo || !exp.empresa || !exp.dataInicio || !exp.descricao
+    );
+
+    if (experienciasInvalidas.length > 0) {
+        alert('Por favor, preencha todos os campos obrigatórios (*) de todas as experiências.');
+        return;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Previne submit ao pressionar Enter nos inputs de experiência
+    document.getElementById('experienciasContainer').addEventListener('keydown', function(e) {
+        if (e.target.tagName === 'INPUT' && e.key === 'Enter') {
+            e.preventDefault();
+        }
+    });
+});
+
+    // Simular salvamento
+    console.log('Experiências salvas:', experiencias);
+    alert('Experiências profissionais salvas com sucesso!');
+}
+
+// Antes de enviar o formulário, serialize as experiências
+document.querySelector('form').addEventListener('submit', function(e) {
+    document.getElementById('experiencias_json').value = JSON.stringify(experiencias);
+});
 </script>
 @endsection
 

@@ -10,13 +10,18 @@ return new class extends Migration
     {
         Schema::create('experiencias_profissionais', function (Blueprint $table) {
             $table->id('id_experiencias_profissionais');
-            $table->foreignId('usuario_id')->constrained('usuarios', 'id_usuarios')->onDelete('cascade');
+            $table->unsignedBigInteger('usuario_id');
+            $table->foreign('usuario_id')->references('id_usuarios')->on('usuarios')->onDelete('cascade');
             $table->string('cargo', 100);
             $table->string('empresa_nome', 100);
             $table->text('descricao');
             $table->date('data_inicio');
             $table->date('data_fim')->nullable();
             $table->timestamps();
+            $table->string('tipo', 50)->nullable();
+        $table->string('modalidade', 50)->nullable();
+        $table->text('conquistas')->nullable();
+        $table->boolean('atual')->default(false);
         });
     }
 

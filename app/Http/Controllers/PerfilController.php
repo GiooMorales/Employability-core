@@ -74,6 +74,31 @@ class PerfilController extends Controller
         
         $user->update($validated);
         
+        // Salvar experiências profissionais
+        if ($request->filled('experiencias_json')) {
+            $experiencias = json_decode($request->input('experiencias_json'), true);
+            if (is_array($experiencias)) {
+                // Remove experiências antigas do usuário
+                $user->experiences()->delete();
+                foreach ($experiencias as $exp) {
+                    // Validação básica dos campos
+                    if (!empty($exp['cargo']) && !empty($exp['empresa']) && !empty($exp['dataInicio']) && !empty($exp['descricao'])) {
+                        $user->experiences()->create([
+                            'cargo' => $exp['cargo'],
+                            'empresa_nome' => $exp['empresa'],
+                            'descricao' => $exp['descricao'],
+                            'data_inicio' => $exp['dataInicio'],
+                            'data_fim' => $exp['dataFim'] ?? null,
+                            'tipo' => $exp['tipo'] ?? null,
+                            'modalidade' => $exp['modalidade'] ?? null,
+                            'conquistas' => $exp['conquistas'] ?? null,
+                            'atual' => $exp['atual'] ?? false,
+                        ]);
+                    }
+                }
+            }
+        }
+        
         // Debug temporário
         \Log::info('Usuário após atualização:', $user->toArray());
         
