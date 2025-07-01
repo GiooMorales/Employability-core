@@ -10,7 +10,7 @@ use App\Http\Controllers\CertificadoController;
 use App\Http\Controllers\RepositorioController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ConnectionController;
-use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\NotificationController;
 
 // Rota raiz
 Route::get('/', function () {
@@ -79,15 +79,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/connections/accept/{connectionId}', [ConnectionController::class, 'accept'])->name('connections.accept');
     Route::post('/connections/reject/{connectionId}', [ConnectionController::class, 'reject'])->name('connections.reject');
 
-    Route::get('/perfil/experiencias-json', [PerfilController::class, 'experienciasJson'])->name('profile.experience.json');
-
-    Route::delete('/perfil/formacao/{id}', [PerfilController::class, 'deleteEducation'])->name('perfil.formacao.remover');
-});
-
-Route::get('/proxy/universidades', function (\Illuminate\Http\Request $request) {
-    $nome = $request->query('universityName');
-    $url = 'https://brazil-universities-api.herokuapp.com/search';
-    $response = Http::get($url, ['universityName' => $nome]);
-    return response($response->body(), $response->status())
-        ->header('Content-Type', 'application/json');
+    
+    // Rotas para Notificações
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unreadCount');
+    Route::post('/notifications/{id}/accept-connection', [NotificationController::class, 'acceptConnection'])->name('notifications.acceptConnection');
+    Route::post('/notifications/{id}/reject-connection', [NotificationController::class, 'rejectConnection'])->name('notifications.rejectConnection');
+    Route::get('/notifications/recent-unread', [NotificationController::class, 'getRecentUnread'])->name('notifications.recentUnread');
+    Route::delete('/connections/{id}', [ConnectionController::class, 'destroy'])->name('connections.destroy');
 });

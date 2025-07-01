@@ -69,12 +69,12 @@ class User extends Authenticatable
 
     public function experiences()
     {
-        return $this->hasMany(Experience::class, 'id_usuario', 'id_usuarios');
+        return $this->hasMany(Experience::class, 'usuario_id', 'id_usuarios');
     }
 
     public function education()
     {
-        return $this->hasMany(Education::class, 'id_usuario', 'id_usuarios');
+        return $this->hasMany(Education::class, 'usuario_id', 'id_usuarios');
     }
 
     public function activities()

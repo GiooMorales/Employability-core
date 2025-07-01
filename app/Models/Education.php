@@ -10,7 +10,7 @@ class Education extends Model
     protected $primaryKey = 'id_formacoes';
 
     protected $fillable = [
-        'id_usuario',
+        'usuario_id',
         'instituicao',
         'curso',
         'data_inicio',
@@ -27,6 +27,6 @@ class Education extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'id_usuario', 'id_usuarios');
+        return $this->belongsTo(User::class, 'usuario_id', 'id_usuarios');
     }
 } 
