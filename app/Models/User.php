@@ -25,15 +25,16 @@ class User extends Authenticatable
 
     protected $fillable = [
         'nome',
+        'titulo',
         'email',
         'senha',
-        'bio',
+        'sobre',
         'cidade',
         'estado',
         'pais',
         'url_foto',
-        'profissao',
-        'link'
+        'link',
+        'quantidade_conn'
     ];
 
     /**
@@ -68,12 +69,12 @@ class User extends Authenticatable
 
     public function experiences()
     {
-        return $this->hasMany(Experience::class, 'usuario_id', 'id_usuarios');
+        return $this->hasMany(Experience::class, 'id_usuario', 'id_usuarios');
     }
 
     public function education()
     {
-        return $this->hasMany(Education::class, 'usuario_id', 'id_usuarios');
+        return $this->hasMany(Education::class, 'id_usuario', 'id_usuarios');
     }
 
     public function activities()

@@ -22,15 +22,15 @@
                     <p class="profile-title">{{ $trab_atual }}</p>
                     <div class="profile-stats">
                         <div class="stat">
-                            <div class="stat-number">254</div>
+                            <div class="stat-number">{{ $estatisticas['conexoes'] ?? 0 }}</div>
                             <div class="stat-label">Conexões</div>
                         </div>
                         <div class="stat">
-                            <div class="stat-number">42</div>
+                            <div class="stat-number">{{ $estatisticas['projetos'] ?? 0 }}</div>
                             <div class="stat-label">Projetos</div>
                         </div>
                         <div class="stat">
-                            <div class="stat-number">18</div>
+                            <div class="stat-number">{{ $estatisticas['contribuicoes'] ?? 0 }}</div>
                             <div class="stat-label">Contribuições</div>
                         </div>
                     </div>

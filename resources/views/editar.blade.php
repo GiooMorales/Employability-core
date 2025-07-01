@@ -64,8 +64,8 @@
 
                         <div class="form-row">
                             <div class="form-col">
-                                <label class="form-label">Título Profissional</label>
-                                <input type="text" class="form-input" name="profissao" value="{{ old('profissao', $user->profissao) }}">
+                                <label class="form-label">Título do Perfil</label>
+                                <input type="text" class="form-input" name="titulo" value="{{ old('titulo', $user->titulo) }}">
                                 <span class="help-text">Título que aparece no perfil</span>
                             </div>
 
@@ -77,7 +77,7 @@
 
                         <div class="form-group">
                             <label class="form-label">Sobre Mim</label>
-                            <textarea name="bio" class="form-textarea" maxlength="500">{{ old('bio', $user->bio) }}</textarea>
+                            <textarea name="sobre" class="form-textarea" maxlength="500">{{ old('sobre', $user->sobre) }}</textarea>
                             <span class="help-text">Máximo de 500 caracteres</span>
                         </div>
 
@@ -104,8 +104,15 @@
                         
                         <div class="skills-container" id="skillsContainer">
                             @foreach($user->skills as $skill)
+                                @php
+                                    $softSkills = ['Comunicação', 'Trabalho em Equipe', 'Liderança', 'Resolução de Problemas', 'Gestão de Tempo', 'Adaptabilidade', 'Criatividade', 'Pensamento Crítico'];
+                                    $isSoftSkill = in_array($skill->nome, $softSkills);
+                                @endphp
                                 <div class="skill-tag" data-skill-id="{{ $skill->id }}">
                                     {{ $skill->nome }}
+                                    @if(!$isSoftSkill)
+                                        <span class="skill-level">{{ $skill->nivel }}</span>
+                                    @endif
                                     <span class="remove-skill" onclick="removeSkill({{ $skill->id }})">
                                         <i class="fas fa-times"></i>
                                     </span>
@@ -422,10 +429,24 @@ function closeNivelModal() {
 document.addEventListener('DOMContentLoaded', function() {
     let formacoes = [];
     // Marcar as habilidades já selecionadas
-    const userSkills = Array.from(document.querySelectorAll('.skill-tag')).map(tag => ({
-        name: tag.textContent.trim().split(' - ')[0],
-        level: tag.querySelector('.skill-level')?.textContent || 'Intermediário'
-    }));
+    const userSkills = Array.from(document.querySelectorAll('.skill-tag')).map(tag => {
+        const skillText = tag.textContent.trim();
+        const hasLevel = tag.querySelector('.skill-level');
+        
+        if (hasLevel) {
+            // Habilidade técnica com nível
+            return {
+                name: skillText.split(' ').slice(0, -1).join(' '), // Remove o nível
+                level: hasLevel.textContent
+            };
+        } else {
+            // Soft skill sem nível
+            return {
+                name: skillText,
+                level: null
+            };
+        }
+    });
 
     document.querySelectorAll('.skill-item').forEach(item => {
         const skillName = item.textContent.trim();
@@ -441,8 +462,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const skillName = this.textContent.trim();
             const isSelected = this.classList.contains('selected');
             
+            // Verificar se é uma soft skill (está na segunda seção)
+            const isSoftSkill = this.closest('.skills-grid').previousElementSibling.textContent.includes('Soft Skills');
+            
             if (!isSelected) {
-                showNivelModal(skillName);
+                if (isSoftSkill) {
+                    // Para soft skills, adicionar diretamente com nível "Básico"
+                    addSkillWithLevel(skillName, 'Básico');
+                } else {
+                    // Para habilidades técnicas, mostrar modal de seleção de nível
+                    showNivelModal(skillName);
+                }
             } else {
                 // Remover habilidade
                 const skillTag = Array.from(document.querySelectorAll('.skill-tag'))
@@ -542,13 +572,29 @@ function addSkillWithLevel(skillName, nivel) {
             const skillTag = document.createElement('div');
             skillTag.className = 'skill-tag';
             skillTag.setAttribute('data-skill-id', data.skill.id);
-            skillTag.innerHTML = `
-                ${skillName}
-                <span class="skill-level">${nivel}</span>
-                <span class="remove-skill" onclick="removeSkill(${data.skill.id})">
-                    <i class="fas fa-times"></i>
-                </span>
-            `;
+            
+            // Verificar se é uma soft skill
+            const isSoftSkill = skillItem && skillItem.closest('.skills-grid').previousElementSibling.textContent.includes('Soft Skills');
+            
+            if (isSoftSkill) {
+                // Para soft skills, não mostrar o nível
+                skillTag.innerHTML = `
+                    ${skillName}
+                    <span class="remove-skill" onclick="removeSkill(${data.skill.id})">
+                        <i class="fas fa-times"></i>
+                    </span>
+                `;
+            } else {
+                // Para habilidades técnicas, mostrar o nível
+                skillTag.innerHTML = `
+                    ${skillName}
+                    <span class="skill-level">${nivel}</span>
+                    <span class="remove-skill" onclick="removeSkill(${data.skill.id})">
+                        <i class="fas fa-times"></i>
+                    </span>
+                `;
+            }
+            
             container.appendChild(skillTag);
         }
     });
@@ -566,7 +612,17 @@ function removeSkill(skillId) {
         if (data.success) {
             const skillTag = document.querySelector(`.skill-tag[data-skill-id="${skillId}"]`);
             if (skillTag) {
-                const skillName = skillTag.textContent.trim().split(' - ')[0];
+                const hasLevel = skillTag.querySelector('.skill-level');
+                let skillName;
+                
+                if (hasLevel) {
+                    // Habilidade técnica com nível
+                    skillName = skillTag.textContent.trim().split(' ').slice(0, -1).join(' ');
+                } else {
+                    // Soft skill sem nível
+                    skillName = skillTag.textContent.trim();
+                }
+                
                 const skillItem = Array.from(document.querySelectorAll('.skill-item'))
                     .find(item => item.textContent.trim() === skillName);
                 if (skillItem) {

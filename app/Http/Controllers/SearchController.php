@@ -13,7 +13,7 @@ class SearchController extends Controller
         
         $users = User::where('nome', 'like', "%{$query}%")
             ->orWhere('email', 'like', "%{$query}%")
-            ->orWhere('profissao', 'like', "%{$query}%")
+            ->orWhere('titulo', 'like', "%{$query}%")
             ->orWhere('cidade', 'like', "%{$query}%")
             ->orWhere('estado', 'like', "%{$query}%")
             ->orWhere('pais', 'like', "%{$query}%")

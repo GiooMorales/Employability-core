@@ -40,10 +40,10 @@
             </div>
             <h2 class="profile-title">{{ $usuario->titulo ?? '' }}</h2>
             <div class="profile-meta">
-                <div class="meta-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>{{ $usuario->cidade ?? 'Localização desconhecida' }}</span>
-                </div>
+                
+                
+
+
                 <div class="meta-item">
                     <i class="fas fa-link"></i>
                     @if($usuario->link)
@@ -52,8 +52,11 @@
                         <span class="text-muted">Nenhum link adicionado</span>
                     @endif
                 </div>
+                
+
                 <div class="meta-item">
-                    <span>{{ $usuario->profissao ?? 'Sem Profissão' }}</span>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>{{ $usuario->cidade ?? 'Localização desconhecida' }}</span>
                 </div>
 
                 @if(Auth::id() !== $usuario->id_usuarios)
@@ -66,6 +69,13 @@
                                     <i class="fas fa-user-plus"></i> Conectar
                                 </button>
                             </form>
+                            @if(isset($connection))
+                            <form action="{{ route('connections.destroy', $connection->id) }}" method="POST" onsubmit="return confirm('Tem certeza que quer remover esta conexão?')">
+                                @csrf
+                                 @method('DELETE')
+                          <button type="submit" class="btn btn-danger">Remover Conexão</button>
+                             </form>
+                            @endif
                         @elseif($statusConexao === 'pendente')
                             <button class="btn btn-pending" disabled>
                                 <i class="fas fa-clock"></i> Solicitação enviada
@@ -92,7 +102,7 @@
 
     <div class="profile-stats-bar">
         <div class="stat">
-            <div class="stat-number">{{ $estatisticas['conexoes'] ?? '0' }}</div>
+            <div class="stat-number">{{ $usuario->quantidade_conn ?? '0' }}</div>
             <div class="stat-label">Conexões</div>
         </div>
         <div class="stat">

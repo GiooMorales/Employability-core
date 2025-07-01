@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Connection;
+use App\Models\User;
+use App\Notifications\ConnectionRequestNotification;
 use Illuminate\Http\Request;
 
 class ConnectionController extends Controller
@@ -14,6 +16,10 @@ class ConnectionController extends Controller
         $connection->connected_user_id = $userId;
         $connection->status = 'pendente';
         $connection->save();
+
+        // Enviar notificação para o usuário que recebeu a solicitação
+        $targetUser = User::find($userId);
+        $targetUser->notify(new ConnectionRequestNotification(auth()->user(), $connection->id));
 
         return redirect()->back()->with('success', 'Solicitação de conexão enviada!');
     }
@@ -35,4 +41,20 @@ class ConnectionController extends Controller
 
         return redirect()->back()->with('success', 'Conexão recusada!');
     }
+
+    
+public function destroy($id)
+{
+    $connection = Connection::findOrFail($id);
+
+    // Verifica se o usuário tem permissão para excluir essa conexão
+    if (auth()->id() !== $connection->user_id && auth()->id() !== $connection->connection_id) {
+        return redirect()->back()->with('error', 'Acesso negado.');
+    }
+
+    $connection->delete();
+
+    return redirect()->back()->with('success', 'Conexão removida com sucesso.');
+}
+
 } 
