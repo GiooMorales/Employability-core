@@ -223,8 +223,72 @@
                         </div>
                     </div>
 
+                    <!-- Formações Acadêmicas -->
+                    <div class="section-card">
+                        <div class="section-header">
+                            Formações Acadêmicas
+                        </div>
+                        <div class="section-content">
+                            <div id="formacoes-list">
+                                <!-- Cards de formações serão renderizados aqui -->
+                            </div>
+                            <hr style="margin: 30px 0;">
+                            <div id="nova-formacao-form" class="education-form">
+                                <h4>Adicionar Nova Formação</h4>
+                                <div class="form-row">
+                                    <div class="form-col">
+                                        <label>Curso *</label>
+                                        <input type="text" id="novo-curso" class="form-input">
+                                    </div>
+                                    <div class="form-col">
+                                        <label>Universidade *</label>
+                                        <div style="position: relative;">
+                                            <input type="text" id="filtro-universidade" class="form-input" placeholder="Digite para buscar ou selecionar...">
+                                            <ul id="universidade-sugestoes" class="autocomplete-list" style="position: absolute; z-index: 10; background: #fff; border: 1px solid #ccc; width: 100%; display: none; max-height: 180px; overflow-y: auto;"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-col">
+                                        <label>Nível</label>
+                                        <select id="novo-nivel" class="form-input">
+                                            <option value="">Selecione...</option>
+                                            <option value="Graduação">Graduação</option>
+                                            <option value="Pós-graduação">Pós-graduação</option>
+                                            <option value="Mestrado">Mestrado</option>
+                                            <option value="Doutorado">Doutorado</option>
+                                            <option value="Técnico">Técnico</option>
+                                            <option value="Outro">Outro</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-col">
+                                        <label>Situação</label>
+                                        <select id="novo-situacao" class="form-input">
+                                            <option value="">Selecione...</option>
+                                            <option value="Cursando">Cursando</option>
+                                            <option value="Concluído">Concluído</option>
+                                            <option value="Trancado">Trancado</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-col">
+                                        <label>Data de Início *</label>
+                                        <input type="date" id="novo-data-inicio-formacao" class="form-input">
+                                    </div>
+                                    <div class="form-col">
+                                        <label>Data de Término</label>
+                                        <input type="date" id="novo-data-fim-formacao" class="form-input">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="adicionarFormacao()">Adicionar Formação</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-actions">
                         <input type="hidden" name="experiencias_json" id="experiencias_json">
+                        <input type="hidden" name="formacoes_json" id="formacoes_json">
                         <a href="{{ route('perfil') }}" class="btn btn-outline">Cancelar</a>
                         <button type="submit" class="btn btn-primary">Salvar Alterações</button>
                     </div>
@@ -319,9 +383,27 @@
     padding: 2px 8px;
     border-radius: 12px;
 }
+
+.autocomplete-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.autocomplete-list li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+.autocomplete-list li:hover {
+    background: #f0f0f0;
+}
 </style>
 
 @section('scripts')
+<script>
+    const UNIVERSIDADES_JSON_URL = "{{ asset('api/uni-facul.json') }}";
+    let universidadesBR = [];
+    let timeout;
+</script>
 <script>
 let selectedSkill = null;
 let contadorExperiencias = 0;
@@ -338,6 +420,7 @@ function closeNivelModal() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    let formacoes = [];
     // Marcar as habilidades já selecionadas
     const userSkills = Array.from(document.querySelectorAll('.skill-tag')).map(tag => ({
         name: tag.textContent.trim().split(' - ')[0],
@@ -381,6 +464,56 @@ document.addEventListener('DOMContentLoaded', function() {
                 closeNivelModal();
             }
         });
+    });
+
+    // --- Autocomplete de Universidades (local) ---
+    const inputFiltro = document.getElementById('filtro-universidade');
+    const sugestoesUl = document.getElementById('universidade-sugestoes');
+
+    async function carregarUniversidades(nome = '') {
+        if (universidadesBR.length === 0) {
+            const res = await fetch(UNIVERSIDADES_JSON_URL);
+            universidadesBR = await res.json();
+        }
+        let lista = universidadesBR;
+        if (nome) {
+            const termo = nome.toLowerCase();
+            lista = universidadesBR.filter(u =>
+                u.name.toLowerCase().includes(termo) ||
+                (u['alpha_two_code'] && u['alpha_two_code'].toLowerCase().includes(termo)) ||
+                (u.domains && u.domains.some(d => d.toLowerCase().includes(termo)))
+            );
+        }
+        // Mostra até 10 sugestões
+        sugestoesUl.innerHTML = '';
+        if (lista.length && nome) {
+            sugestoesUl.style.display = 'block';
+            lista.slice(0, 10).forEach(u => {
+                const li = document.createElement('li');
+                li.textContent = u.name + (u.country ? ' (' + u.country + ')' : '');
+                li.addEventListener('click', function() {
+                    inputFiltro.value = u.name;
+                    sugestoesUl.style.display = 'none';
+                });
+                sugestoesUl.appendChild(li);
+            });
+        } else {
+            sugestoesUl.style.display = 'none';
+        }
+        // Atualiza variável global
+        window.universidadesBR = universidadesBR;
+    }
+
+    inputFiltro.addEventListener('input', e => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => carregarUniversidades(e.target.value), 300);
+    });
+
+    // Esconde sugestões ao clicar fora
+    document.addEventListener('click', function(e) {
+        if (!inputFiltro.contains(e.target) && !sugestoesUl.contains(e.target)) {
+            sugestoesUl.style.display = 'none';
+        }
     });
 });
 
@@ -507,7 +640,7 @@ function removerExperiencia(id) {
 }
 
 function renderizarExperiencias() {
-    const container = document.getElementById('experienciasContainer');
+    const container = document.getElementById('experiencias-list');
     container.innerHTML = '';
 
     experiencias.forEach(exp => {
@@ -639,10 +772,17 @@ function salvarExperiencias() {
 
     document.addEventListener('DOMContentLoaded', function() {
     // Previne submit ao pressionar Enter nos inputs de experiência
-    document.getElementById('experienciasContainer').addEventListener('keydown', function(e) {
+    document.getElementById('experiencias-list').addEventListener('keydown', function(e) {
         if (e.target.tagName === 'INPUT' && e.key === 'Enter') {
             e.preventDefault();
         }
+
+        select.addEventListener('change', function() {
+    if (select.value && select.value !== 'Selecione...') {
+        inputFiltro.value = select.value;
+    }
+}); 
+
     });
 });
 
@@ -654,6 +794,8 @@ function salvarExperiencias() {
 // Antes de enviar o formulário, serialize as experiências
 document.querySelector('form').addEventListener('submit', function(e) {
     document.getElementById('experiencias_json').value = JSON.stringify(experiencias);
+    document.getElementById('formacoes_json').value = JSON.stringify(formacoes);
+    console.log('Formações enviadas:', formacoes);
 });
 
 // Inicialização: carregar experiências do backend
@@ -830,6 +972,126 @@ function salvarEdicaoExperienciaAjax(id) {
             renderizarExperienciasAjax();
         } else {
             alert('Erro ao editar experiência!');
+        }
+    });
+}
+
+// --- Formações Acadêmicas ---
+let formacoes = [];
+
+function renderizarFormacoes() {
+    const container = document.getElementById('formacoes-list');
+    container.innerHTML = '';
+    formacoes.forEach((f, idx) => {
+        const id = f.id_formacoes;
+        const idAttr = id ? `data-id=\"${id}\"` : '';
+        container.innerHTML += `
+        <div class=\"education-item\" style=\"background: #f8f9fa; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); padding: 18px 20px; margin-bottom: 18px;\" ${idAttr}>
+            <div style=\"display: flex; justify-content: space-between; align-items: center;\">
+                <div>
+                    <div style=\"font-weight: bold; font-size: 18px; color: #0a66c2;\">${f.universidade}</div>
+                    <div style=\"font-size: 16px; color: #333;\">${f.curso}</div>
+                    <div style=\"font-size: 14px; color: #666; margin-top: 2px;\">
+                        ${f.data_inicio ? new Date(f.data_inicio).toLocaleDateString('pt-BR', {month: 'short', year: 'numeric'}) : ''} -
+                        ${f.data_fim ? new Date(f.data_fim).toLocaleDateString('pt-BR', {month: 'short', year: 'numeric'}) : '---'}
+                    </div>
+                    <div style=\"margin-top: 8px; color: #444;\">
+                        <strong>Nível:</strong> ${f.nivel || '-'} | <strong>Situação:</strong> ${f.situacao || '-'}
+                    </div>
+                </div>
+                <div>
+                    <button type=\"button\" class=\"btn btn-danger\" onclick=\"removerFormacaoAjax(${id}, event)\">Remover</button>
+                </div>
+            </div>
+        </div>`;
+    });
+}
+
+// Função para remover acentos
+function removerAcentos(str) {
+    return str.normalize('NFD').replace(/[0-\u036f]/g, '');
+}
+
+function adicionarFormacao() {
+    const curso = document.getElementById('novo-curso').value;
+    const universidade = document.getElementById('filtro-universidade').value;
+    const nivel = document.getElementById('novo-nivel').value;
+    const situacao = document.getElementById('novo-situacao').value;
+    const data_inicio = document.getElementById('novo-data-inicio-formacao').value;
+    const data_fim = document.getElementById('novo-data-fim-formacao').value;
+    if (!curso || !universidade || !data_inicio) {
+        alert('Preencha os campos obrigatórios: curso, universidade e data de início.');
+        return;
+    }
+    const formacaoObj = {
+        curso: curso,
+        universidade: universidade,
+        data_inicio: data_inicio,
+        data_fim: data_fim,
+        nivel: nivel,
+        situacao: situacao
+    };
+    formacoes.push(formacaoObj);
+    console.log('Formação adicionada:', formacaoObj);
+    renderizarFormacoes();
+    document.getElementById('novo-curso').value = '';
+    document.getElementById('filtro-universidade').value = '';
+    document.getElementById('novo-nivel').value = '';
+    document.getElementById('novo-situacao').value = '';
+    document.getElementById('novo-data-inicio-formacao').value = '';
+    document.getElementById('novo-data-fim-formacao').value = '';
+}
+
+function removerFormacao(idx, id = null) {
+    if (id) {
+        if (!confirm('Tem certeza que deseja remover esta formação?')) return;
+        fetch(`/perfil/formacao/${id}`, {
+            method: 'DELETE',
+            headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'},
+        })
+        .then(response => response.json())
+        .then(resp => {
+            if (resp.success) {
+                formacoes = formacoes.filter(f => f.id_formacoes != id);
+                renderizarFormacoes();
+            } else {
+                alert('Erro ao remover formação!');
+            }
+        });
+    } else {
+        formacoes.splice(idx, 1);
+        renderizarFormacoes();
+    }
+}
+
+window.formacoes = @json($user->education ?? []);
+if (Array.isArray(window.formacoes)) {
+    formacoes = window.formacoes.map(f => ({
+        id_formacoes: f.id_formacoes,
+        curso: f.curso || f.nome_curso || '',
+        universidade: f.instituicao || f.universidade || '',
+        data_inicio: f.data_inicio || '',
+        data_fim: f.data_fim || '',
+        nivel: f.nivel || '',
+        situacao: f.situacao || ''
+    }));
+    renderizarFormacoes();
+}
+
+// Função de remoção AJAX igual experiências
+function removerFormacaoAjax(id, event) {
+    if (event) event.preventDefault();
+    fetch(`/perfil/formacao/${id}`, {
+        method: 'DELETE',
+        headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'},
+    })
+    .then(response => response.json())
+    .then(resp => {
+        if (resp.success) {
+            formacoes = formacoes.filter(f => f.id_formacoes != id);
+            renderizarFormacoes();
+        } else {
+            alert('Erro ao remover formação!');
         }
     });
 }

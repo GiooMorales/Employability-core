@@ -43,9 +43,9 @@
                         <div class="experience-company" style="font-weight: bold; font-size: 18px; color: #0a66c2;">{{ $experiencia->empresa_nome }}</div>
                         <div class="experience-position" style="font-size: 16px; color: #333;">{{ $experiencia->cargo }}</div>
                         <div class="experience-period" style="font-size: 14px; color: #666; margin-top: 2px;">
-                            {{ $experiencia->data_inicio ? $experiencia->data_inicio->format('M/Y') : '' }}
+                            {{ $experiencia->data_inicio ? $experiencia->data_inicio->format('d/m/Y') : '' }}
                             -
-                            {{ $experiencia->atual ?? false ? 'Presente' : ($experiencia->data_fim ? $experiencia->data_fim->format('M/Y') : '---') }}
+                            {{ $experiencia->atual ?? false ? 'Presente' : ($experiencia->data_fim ? $experiencia->data_fim->format('d/m/Y') : '---') }}
                         </div>
                     </div>
                     <div style="margin-left: 20px; text-align: right;">
@@ -76,12 +76,21 @@
             <span>Formação</span>
         </div>
         @forelse($formacoes ?? [] as $formacao)
-            <div class="education-item">
-                <img src="{{ $formacao->logo ?? '/api/placeholder/48/48' }}" alt="{{ $formacao->instituicao }}" class="education-logo">
-                <div class="education-info">
-                    <div class="education-school">{{ $formacao->instituicao }}</div>
-                    <div class="education-degree">{{ $formacao->curso }}</div>
-                    <div class="education-period">{{ $formacao->data_inicio->format('Y') }} - {{ $formacao->data_fim ? $formacao->data_fim->format('Y') : 'Presente' }}</div>
+            <div class="education-item" style="margin-bottom: 22px; background: #f8f9fa; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); padding: 18px 20px; display: flex; align-items: flex-start;">
+                <div class="education-info" style="flex:1;">
+                    <div class="education-school" style="font-weight: bold; font-size: 18px; color: #0a66c2;">{{ $formacao->instituicao }}</div>
+                    <div class="education-degree" style="font-size: 16px; color: #333; margin-bottom: 2px;">{{ $formacao->curso }}</div>
+                    @if($formacao->nivel || $formacao->situacao)
+                        <div class="education-extra" style="font-size: 14px; color: #666; margin-bottom: 2px;">
+                            <strong>Nível:</strong> {{ $formacao->nivel ?? '-' }} |
+                            <strong>Situação:</strong> {{ $formacao->situacao ?? '-' }}
+                        </div>
+                    @endif
+                    <div class="education-period" style="font-size: 14px; color: #666;">
+                        {{ $formacao->data_inicio ? $formacao->data_inicio->format('d/m/Y') : '' }}
+                        -
+                        {{ $formacao->data_fim ? $formacao->data_fim->format('d/m/Y') : 'Presente' }}
+                    </div>
                 </div>
             </div>
         @empty

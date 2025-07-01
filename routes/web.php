@@ -10,6 +10,7 @@ use App\Http\Controllers\CertificadoController;
 use App\Http\Controllers\RepositorioController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ConnectionController;
+use Illuminate\Support\Facades\Http;
 
 // Rota raiz
 Route::get('/', function () {
@@ -79,4 +80,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/connections/reject/{connectionId}', [ConnectionController::class, 'reject'])->name('connections.reject');
 
     Route::get('/perfil/experiencias-json', [PerfilController::class, 'experienciasJson'])->name('profile.experience.json');
+
+    Route::delete('/perfil/formacao/{id}', [PerfilController::class, 'deleteEducation'])->name('perfil.formacao.remover');
+});
+
+Route::get('/proxy/universidades', function (\Illuminate\Http\Request $request) {
+    $nome = $request->query('universityName');
+    $url = 'https://brazil-universities-api.herokuapp.com/search';
+    $response = Http::get($url, ['universityName' => $nome]);
+    return response($response->body(), $response->status())
+        ->header('Content-Type', 'application/json');
 });

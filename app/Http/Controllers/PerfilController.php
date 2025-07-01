@@ -98,7 +98,32 @@ class PerfilController extends Controller
                 }
             }
         }
-        
+
+        // Salvar formações acadêmicas
+        if ($request->filled('formacoes_json')) {
+            $formacoes = json_decode($request->input('formacoes_json'), true);
+            if (is_array($formacoes)) {
+                // Remove todas as formações antigas do usuário
+                $user->education()->delete();
+                $formacoesValidas = array_filter($formacoes, function($f) {
+                    return !empty($f['curso']) && !empty($f['universidade']) && !empty($f['data_inicio']);
+                });
+                if (count($formacoesValidas) > 0) {
+                    foreach ($formacoesValidas as $f) {
+                        $user->education()->create([
+                            'curso' => $f['curso'],
+                            'instituicao' => $f['universidade'],
+                            'data_inicio' => $f['data_inicio'],
+                            'data_fim' => $f['data_fim'] ?? null,
+                            'logo' => null,
+                            'nivel' => $f['nivel'] ?? null,
+                            'situacao' => $f['situacao'] ?? null
+                        ]);
+                    }
+                }
+            }
+        }
+
         // Debug temporário
         \Log::info('Usuário após atualização:', $user->toArray());
         
@@ -304,5 +329,16 @@ class PerfilController extends Controller
         $user = Auth::user();
         $experiencias = $user->experiences()->orderByDesc('data_inicio')->get();
         return response()->json(['experiencias' => $experiencias]);
+    }
+
+    public function deleteEducation($id)
+    {
+        $user = Auth::user();
+        $formacao = $user->education()->find($id);
+        if (!$formacao) {
+            return response()->json(['success' => false, 'message' => 'Formação não encontrada.'], 404);
+        }
+        $formacao->delete();
+        return response()->json(['success' => true]);
     }
 }

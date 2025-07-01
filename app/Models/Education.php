@@ -15,7 +15,9 @@ class Education extends Model
         'curso',
         'data_inicio',
         'data_fim',
-        'logo'
+        'logo',
+        'nivel',
+        'situacao'
     ];
 
     protected $casts = [
