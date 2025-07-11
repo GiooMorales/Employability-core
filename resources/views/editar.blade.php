@@ -414,7 +414,7 @@
 <script>
 let selectedSkill = null;
 let contadorExperiencias = 0;
-let experiencias = [];
+let experiencias = @json($user->experiences()->get());
 
 function showNivelModal(skillName) {
     selectedSkill = skillName;
@@ -849,13 +849,25 @@ function salvarExperiencias() {
 
 // Antes de enviar o formulário, serialize as experiências
 document.querySelector('form').addEventListener('submit', function(e) {
-    document.getElementById('experiencias_json').value = JSON.stringify(experiencias);
+    // Converter os campos para o formato esperado pelo backend
+    const experienciasConvertidas = experiencias.map(exp => ({
+        cargo: exp.cargo,
+        empresa: exp.empresa || exp.empresa_nome || '',
+        dataInicio: exp.dataInicio || exp.data_inicio || '',
+        dataFim: exp.dataFim || exp.data_fim || '',
+        descricao: exp.descricao,
+        tipo: exp.tipo,
+        modalidade: exp.modalidade,
+        conquistas: exp.conquistas,
+        atual: exp.atual
+    }));
+    document.getElementById('experiencias_json').value = JSON.stringify(experienciasConvertidas);
     document.getElementById('formacoes_json').value = JSON.stringify(formacoes);
+    console.log('Experiências enviadas:', experienciasConvertidas);
     console.log('Formações enviadas:', formacoes);
 });
 
 // Inicialização: carregar experiências do backend
-window.experiencias = @json($user->experiences()->get());
 document.addEventListener('DOMContentLoaded', renderizarExperienciasAjax);
 
 // Função para adicionar experiência via AJAX
@@ -891,7 +903,7 @@ function adicionarExperienciaAjax() {
             document.getElementById('novo-atual').checked = false;
             document.getElementById('novo-descricao').value = '';
             document.getElementById('novo-conquistas').value = '';
-            window.experiencias.push(resp.experience);
+            experiencias.push(resp.experience);
             renderizarExperienciasAjax();
         } else {
             if(resp.errors) {
@@ -905,8 +917,7 @@ function adicionarExperienciaAjax() {
 
 // Função para renderizar cards de experiências
 function renderizarExperienciasAjax() {
-    console.log('Renderizando cards', window.experiencias);
-    const experiencias = window.experiencias || [];
+    console.log('Renderizando cards', experiencias);
     const container = document.getElementById('experiencias-list');
     container.innerHTML = '';
     experiencias.forEach(exp => {
@@ -925,9 +936,9 @@ function removerExperienciaAjax(id, event) {
     .then(response => response.json())
     .then(resp => {
         if (resp.success) {
-            console.log('Antes:', window.experiencias);
-            window.experiencias = window.experiencias.filter(exp => exp.id_experiencias_profissionais !== id);
-            console.log('Depois:', window.experiencias);
+            console.log('Antes:', experiencias);
+            experiencias = experiencias.filter(exp => exp.id_experiencias_profissionais !== id);
+            console.log('Depois:', experiencias);
             renderizarExperienciasAjax();
         } else {
             alert('Erro ao remover experiência!');
@@ -937,7 +948,7 @@ function removerExperienciaAjax(id, event) {
 
 // Função para exibir formulário de edição
 function editarExperienciaForm(id) {
-    const exp = window.experiencias.find(e => e.id_experiencias_profissionais === id);
+    const exp = experiencias.find(e => e.id_experiencias_profissionais === id);
     const formDiv = document.getElementById(`editar-exp-form-${id}`);
     if (!exp) return;
     formDiv.innerHTML = `

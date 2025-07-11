@@ -11,7 +11,7 @@
         <div class="section-title">
             <span>Sobre mim</span>
         </div>
-        <div class="about-item-content">
+        <div class="about-item-content" style="white-space: pre-line;">
             {{ $usuario->sobre ?? 'Adicione uma descrição sobre você.' }}
         </div>
     </div>
@@ -42,35 +42,30 @@
         <div class="section-title">
             <span>Experiência</span>
         </div>
-        @forelse($experiencias ?? [] as $experiencia)
-            <div class="experience-item" style="margin-bottom: 25px; background: #f8f9fa; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); padding: 18px 20px;">
-                <div class="experience-header" style="display: flex; align-items: center; margin-bottom: 10px;">
-                    <div style="flex:1;">
-                        <div class="experience-company" style="font-weight: bold; font-size: 18px; color: #0a66c2;">{{ $experiencia->empresa_nome }}</div>
-                        <div class="experience-position" style="font-size: 16px; color: #333;">{{ $experiencia->cargo }}</div>
-                        <div class="experience-period" style="font-size: 14px; color: #666; margin-top: 2px;">
-                            {{ $experiencia->data_inicio ? $experiencia->data_inicio->format('d/m/Y') : '' }}
-                            -
-                            {{ $experiencia->atual ?? false ? 'Presente' : ($experiencia->data_fim ? $experiencia->data_fim->format('d/m/Y') : '---') }}
+        @forelse($experiencias ?? [] as $exp)
+            <div class="experience-item" style="background: #f8f9fa; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); padding: 18px 20px; margin-bottom: 18px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold; font-size: 18px; color: #0a66c2;">{{ $exp->empresa_nome }}</div>
+                        <div style="font-size: 16px; color: #333;">{{ $exp->cargo }}</div>
+                        <div style="font-size: 14px; color: #666; margin-top: 2px;">
+                            {{ $exp->data_inicio ? $exp->data_inicio->format('M/Y') : '' }} -
+                            {{ $exp->atual ? 'Presente' : ($exp->data_fim ? $exp->data_fim->format('M/Y') : '---') }}
+                        </div>
+                        <div style="margin-top: 8px; color: #444;"><strong>Descrição:</strong> {{ $exp->descricao }}</div>
+                        @if($exp->conquistas)
+                        <div style="margin-top: 8px; color: #444;"><strong>Conquistas:</strong> {{ $exp->conquistas }}</div>
+                        @endif
+                        <div style="margin-top: 8px;">
+                            @if($exp->tipo)
+                                <span style="background: #e0e7ef; color: #0a66c2; border-radius: 12px; padding: 4px 12px; font-size: 13px; margin-right: 5px;">{{ $exp->tipo }}</span>
+                            @endif
+                            @if($exp->modalidade)
+                                <span style="background: #e0e7ef; color: #0a66c2; border-radius: 12px; padding: 4px 12px; font-size: 13px;">{{ $exp->modalidade }}</span>
+                            @endif
                         </div>
                     </div>
-                    <div style="margin-left: 20px; text-align: right;">
-                        @if(!empty($experiencia->tipo))
-                            <span style="display: inline-block; background: #e0e7ef; color: #0a66c2; border-radius: 12px; padding: 4px 12px; font-size: 13px; margin-bottom: 4px;">{{ ucfirst($experiencia->tipo) }}</span><br>
-                        @endif
-                        @if(!empty($experiencia->modalidade))
-                            <span style="display: inline-block; background: #e0e7ef; color: #0a66c2; border-radius: 12px; padding: 4px 12px; font-size: 13px;">{{ ucfirst($experiencia->modalidade) }}</span>
-                        @endif
-                    </div>
                 </div>
-                <div class="experience-description" style="margin-top: 10px; color: #444;">
-                    <strong>Descrição:</strong> {{ $experiencia->descricao }}
-                </div>
-                @if(!empty($experiencia->conquistas))
-                <div class="experience-achievements" style="margin-top: 8px; color: #444;">
-                    <strong>Conquistas:</strong> {{ $experiencia->conquistas }}
-                </div>
-                @endif
             </div>
         @empty
             <p>Nenhuma experiência cadastrada.</p>

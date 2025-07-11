@@ -65,18 +65,22 @@ class Usuario extends Model
     }
 
     public function connections()
-{
-    return $this->hasMany(Connection::class, 'user_id')->where('status', 'aprovado');
-}
+    {
+        return $this->hasMany(Connection::class, 'user_id')->where('status', 'aprovado');
+    }
 
-public function connectedWith()
-{
-    return $this->hasMany(Connection::class, 'connection_id')->where('status', 'aprovado');
-}
+    public function connectedWith()
+    {
+        return $this->hasMany(Connection::class, 'connection_id')->where('status', 'aprovado');
+    }
 
-public function todasConexoes()
-{
-    return $this->connections->merge($this->connectedWith());
-}
+    public function todasConexoes()
+    {
+        return $this->connections->merge($this->connectedWith());
+    }
 
+    public function experiences()
+    {
+        return $this->hasMany(\App\Models\Experience::class, 'usuario_id', 'id_usuarios');
+    }
 } 

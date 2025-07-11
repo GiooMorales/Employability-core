@@ -52,7 +52,7 @@ class PerfilController extends Controller
         $validated = $request->validate([
             'nome' => 'required|string|max:255',
             'profissao' => 'nullable|string|max:100',
-            'bio' => 'nullable|string',
+            'sobre' => 'nullable|string',
             'cidade' => 'nullable|string|max:100',
             'estado' => 'nullable|string|max:100',
             'pais' => 'nullable|string|max:100',
@@ -77,13 +77,16 @@ class PerfilController extends Controller
         // Salvar experiências profissionais
         if ($request->filled('experiencias_json')) {
             $experiencias = json_decode($request->input('experiencias_json'), true);
+            \Log::info('JSON de experiências recebido:', $experiencias);
             if (is_array($experiencias)) {
                 // Remove experiências antigas do usuário
                 $user->experiences()->delete();
                 foreach ($experiencias as $exp) {
+                    \Log::info('Tentando criar experiência:', $exp);
                     // Validação básica dos campos
                     if (!empty($exp['cargo']) && !empty($exp['empresa']) && !empty($exp['dataInicio']) && !empty($exp['descricao'])) {
-                        $user->experiences()->create([
+                        $nova = $user->experiences()->create([
+                            'usuario_id' => $user->id_usuarios,
                             'cargo' => $exp['cargo'],
                             'empresa_nome' => $exp['empresa'],
                             'descricao' => $exp['descricao'],
@@ -92,10 +95,15 @@ class PerfilController extends Controller
                             'tipo' => $exp['tipo'] ?? null,
                             'modalidade' => $exp['modalidade'] ?? null,
                             'conquistas' => $exp['conquistas'] ?? null,
-                            'atual' => $exp['atual'] ?? false,
+                            'atual' => isset($exp['atual']) ? (bool)$exp['atual'] : false,
                         ]);
+                        \Log::info('Experiência criada:', $nova->toArray());
+                    } else {
+                        \Log::warning('Experiência ignorada por falta de campos obrigatórios:', $exp);
                     }
                 }
+            } else {
+                \Log::error('experiencias_json não é array:', ['valor' => $experiencias]);
             }
         }
 

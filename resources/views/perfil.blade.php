@@ -153,6 +153,14 @@
     margin-top: 10px;
 }
 
+.profile-bio p {
+    white-space: pre-line;
+}
+
+.profile-bio {
+    white-space: pre-line;
+}
+
 .meta-item {
     display: flex;
     align-items: center;
