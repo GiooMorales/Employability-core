@@ -79,4 +79,9 @@ public function todasConexoes()
     return $this->connections->merge($this->connectedWith());
 }
 
+public function experiences()
+{
+    return $this->hasMany(\App\Models\Experience::class, 'usuario_id', 'id_usuarios');
+}
+
 } 

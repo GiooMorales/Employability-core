@@ -12,7 +12,11 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ConnectionController;
 use App\Http\Controllers\NotificationController;
 
-// Rota raiz
+Route::get('/webtest', function () {
+    return 'Web funcionando!';
+});
+
+
 Route::get('/', function () {
     return redirect()->route('login.page');
 });
