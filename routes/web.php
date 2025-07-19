@@ -89,4 +89,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/{id}/reject-connection', [NotificationController::class, 'rejectConnection'])->name('notifications.rejectConnection');
     Route::get('/notifications/recent-unread', [NotificationController::class, 'getRecentUnread'])->name('notifications.recentUnread');
     Route::delete('/connections/{id}', [ConnectionController::class, 'destroy'])->name('connections.destroy');
+
+
+    //Rotas Login com Github
+    Route::get('/auth/redirect', function () {
+        return Socialite::driver('github')->redirect();
+    });
 });
