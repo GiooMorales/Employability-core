@@ -11,6 +11,7 @@ use App\Http\Controllers\RepositorioController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ConnectionController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ConversationController;
 
 Route::get('/webtest', function () {
     return 'Web funcionando!';
@@ -52,10 +53,13 @@ Route::middleware(['auth'])->group(function () {
     // Rota para visualizar perfil de outro usuário (deve ser a última rota do perfil)
     Route::get('/perfil/{id}', [PerfilController::class, 'show'])->name('perfil.show');
     
-    Route::get('/mensagens', function () {
-        return view('mensagens');
-    })->name('mensagens');
-    
+    // Rotas para Mensagens
+    Route::get('/mensagens', [ConversationController::class, 'index'])->name('mensagens');
+    Route::get('/conversations/{conversation}', [ConversationController::class, 'show'])->name('conversations.show');
+    Route::post('/conversations/{conversation}/messages', [ConversationController::class, 'store'])->name('messages.store');
+    Route::get('/contatos', [ConversationController::class, 'contacts'])->name('contacts');
+    Route::post('/conversations', [ConversationController::class, 'startConversation'])->name('conversations.start');
+
     Route::get('/empregos', function () {
         return view('empregos');
     })->name('empregos');
