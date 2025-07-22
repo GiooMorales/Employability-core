@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('content');
             $table->string('content_type')->default('text');
             $table->boolean('is_read')->default(false);
+            $table->string('image_path')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

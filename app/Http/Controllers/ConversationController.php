@@ -55,20 +55,42 @@ class ConversationController extends Controller
         $this->authorize('reply', $conversation);
 
         $request->validate([
-            'content' => 'required|string',
+            // Pelo menos um dos dois deve estar presente
+            'content' => 'nullable|string',
+            'file' => 'nullable|file|max:20480', // até 20MB
         ]);
-
+        if (!$request->filled('content') && !$request->hasFile('file')) {
+            return response()->json(['error' => 'Digite uma mensagem ou envie um arquivo.'], 422);
+        }
         $userId = Auth::user()->id_usuarios;
-
+        $filePath = null;
+        $fileName = null;
+        $contentType = 'text';
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filePath = $file->store('messages', 'public');
+            $fileName = $file->getClientOriginalName();
+            $mime = $file->getMimeType();
+            if (strpos($mime, 'image/') === 0) {
+                $contentType = 'image';
+            } else {
+                $contentType = 'file';
+            }
+        }
         $message = Message::create([
             'conversation_id' => $conversation->id,
             'sender_id' => $userId,
-            'content' => $request->input('content'),
-            'content_type' => 'text',
-            'is_read' => false
+            'content' => $request->input('content') ?? '',
+            'content_type' => $contentType,
+            'is_read' => false,
+            'image_path' => $filePath,
+            'file_name' => $fileName,
         ]);
-
-        return response()->json(['message' => $message]);
+        $message->refresh();
+        return response()->json([
+            'message' => $message,
+            'created_at_formatted' => $message->created_at ? $message->created_at->format('H:i') : ''
+        ]);
     }
 
     // Marca mensagens como lidas

@@ -29,7 +29,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     'Accept': 'application/json',
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else if (data.errors) {
+                            let msg = Object.values(data.errors).flat().join('\n');
+                            alert(msg);
+                        } else {
+                            alert('Erro ao enviar mensagem.');
+                        }
+                        throw new Error('Erro na requisição');
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.message) {
                     messageInput.value = '';
@@ -43,8 +58,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     const messageTime = document.createElement('div');
                     messageTime.classList.add('message-time');
-                    const time = new Date(data.message.created_at);
-                    messageTime.textContent = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    let timeString = '';
+                    if (data.created_at_formatted) {
+                        timeString = data.created_at_formatted;
+                    } else if (data.message.created_at) {
+                        const time = new Date(data.message.created_at);
+                        if (!isNaN(time)) {
+                            timeString = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        }
+                    }
+                    messageTime.textContent = timeString;
 
                     messageElement.appendChild(messageContent);
                     messageElement.appendChild(messageTime);
@@ -53,7 +76,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     messageArea.scrollTop = messageArea.scrollHeight;
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+            });
         });
     }
     

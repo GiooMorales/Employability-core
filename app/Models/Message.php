@@ -12,6 +12,8 @@ class Message extends Model
         'content',
         'content_type',
         'is_read',
+        'image_path',
+        'file_name',
     ];
 
     public function conversation()
