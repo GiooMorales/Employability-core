@@ -95,4 +95,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/auth/redirect', function () {
         return Socialite::driver('github')->redirect();
     });
+
+    Route::get('/auth/callback', function () {
+       
+        $user = Socialite::driver('github')->user();   
+
+        dd($user);
+        
+    });
+
 });
