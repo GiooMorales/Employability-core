@@ -11,6 +11,8 @@ use App\Http\Controllers\RepositorioController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ConnectionController;
 use App\Http\Controllers\NotificationController;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Auth;
 
 // Rota raiz
 Route::get('/', function () {
@@ -44,6 +46,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/perfil/habilidade', [PerfilController::class, 'addSkill'])->name('profile.skill');
     Route::delete('/perfil/habilidade/{id}', [PerfilController::class, 'removeSkill'])->name('profile.skill.delete');
     Route::post('/perfil/remover-foto', [PerfilController::class, 'removePhoto'])->name('perfil.remover-foto');
+    Route::post('/perfil/github-logout', [PerfilController::class, 'logoutGithub'])->name('perfil.github.logout');
     
     // Rota para visualizar perfil de outro usuário (deve ser a última rota do perfil)
     Route::get('/perfil/{id}', [PerfilController::class, 'show'])->name('perfil.show');
@@ -69,6 +72,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/certificados', [CertificadoController::class, 'store'])->name('certificados.store');
     
     // Rotas para Repositórios
+    Route::get('/repositorios', [RepositorioController::class, 'index'])->name('repositorios.index');
     Route::get('/repositorios/atualizar', [RepositorioController::class, 'update'])->name('repositorios.atualizar');
     
     Route::get('/search', [SearchController::class, 'search'])->name('search');
@@ -93,15 +97,21 @@ Route::middleware(['auth'])->group(function () {
 
     //Rotas Login com Github
     Route::get('/auth/redirect', function () {
-        return Socialite::driver('github')->redirect();
+        return Socialite::driver('github')
+            ->with(['prompt' => 'login'])
+            ->redirect();
     });
 
     Route::get('/auth/callback', function () {
-       
-        $user = Socialite::driver('github')->user();   
+        $githubUser = Socialite::driver('github')->user();   
 
-        dd($user);
-        
+        $user = Auth::user();
+        $user->github_username = $githubUser->getNickname();
+        $user->github_token = $githubUser->token;
+        $user->github_refresh_token = $githubUser->refreshToken ?? null;
+        $user->save();
+
+        return redirect('/perfil');
     });
 
 });
