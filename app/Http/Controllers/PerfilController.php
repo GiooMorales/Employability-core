@@ -25,15 +25,23 @@ class PerfilController extends Controller
         $habilidades = $usuario->skills;
         $experiencias = $usuario->experiences;
         $formacoes = $usuario->education;
-        
+        $repos = [];
+        if ($usuario->github_username && $usuario->github_token) {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Accept' => 'application/vnd.github.v3+json',
+                'Authorization' => 'token ' . $usuario->github_token,
+            ])->get("https://api.github.com/users/{$usuario->github_username}/repos");
+            if ($response->ok()) {
+                $repos = $response->json();
+            }
+        }
         $estatisticas = [
             'conexoes' => $usuario->connections()->where('status', 'aceita')->count(),
             'projetos' => $usuario->projects()->count(),
             'certificados' => $usuario->certificates()->count(),
             'contribuicoes' => 0 // TODO: Implementar contagem de contribuições
         ];
-        
-        return view('perfil', compact('usuario', 'habilidades', 'experiencias', 'formacoes', 'estatisticas'));
+        return view('perfil', compact('usuario', 'habilidades', 'experiencias', 'formacoes', 'estatisticas', 'repos'));
     }
 
     public function edit()
@@ -340,5 +348,15 @@ class PerfilController extends Controller
         }
         $formacao->delete();
         return response()->json(['success' => true]);
+    }
+
+    public function logoutGithub()
+    {
+        $user = Auth::user();
+        $user->github_token = null;
+        $user->github_refresh_token = null;
+        $user->github_username = null;
+        $user->save();
+        return redirect()->route('perfil')->with('success', 'Desconectado do GitHub com sucesso!');
     }
 }

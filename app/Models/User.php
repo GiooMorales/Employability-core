@@ -34,7 +34,10 @@ class User extends Authenticatable
         'pais',
         'url_foto',
         'link',
-        'quantidade_conn'
+        'quantidade_conn',
+        'github_username',
+        'github_token',
+        'github_refresh_token',
     ];
 
     /**
