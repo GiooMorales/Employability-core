@@ -62,6 +62,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/mensagens', [ConversationController::class, 'index'])->name('mensagens');
     Route::get('/conversations/{conversation}', [ConversationController::class, 'show'])->name('conversations.show');
     Route::post('/conversations/{conversation}/messages', [ConversationController::class, 'store'])->name('messages.store');
+    Route::get('/conversations/{conversation}/messages', [ConversationController::class, 'messages'])->name('conversations.messages');
     Route::get('/contatos', [ConversationController::class, 'contacts'])->name('contacts');
     Route::post('/conversations', [ConversationController::class, 'startConversation'])->name('conversations.start');
 

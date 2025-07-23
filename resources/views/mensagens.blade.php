@@ -122,6 +122,7 @@
                     </div>
                 </form>
             </div>
+            <input type="hidden" id="currentConversationId" value="{{ $selectedConversation->id }}">
         @else
             <div class="select-conversation-placeholder">
                 <i class="far fa-comments"></i>

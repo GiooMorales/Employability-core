@@ -93,10 +93,76 @@ document.addEventListener('DOMContentLoaded', function () {
         const conversationItems = conversationsList.querySelectorAll('.conversation-item');
         conversationItems.forEach(item => {
             item.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768) {
-                    document.querySelector('.conversations-list').classList.remove('active');
-                    document.querySelector('.chat-area').classList.add('active');
-                }
+                e.preventDefault();
+                const conversationId = this.dataset.id;
+                // AJAX para buscar dados da conversa
+                fetch(`/conversations/${conversationId}`)
+                    .then(response => response.text())
+                    .then(html => {
+                        // Extrai apenas o conteúdo da área do chat
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newChatArea = doc.querySelector('.chat-area');
+                        if (newChatArea) {
+                            document.querySelector('.chat-area').replaceWith(newChatArea);
+                        }
+                        // Atualiza o campo hidden do id da conversa
+                        const newConversationIdInput = document.getElementById('currentConversationId');
+                        if (newConversationIdInput) {
+                            window.LaravelUserId = newConversationIdInput.dataset.userid || document.querySelector('meta[name="user-id"]')?.content || null;
+                        }
+                        // Atualiza polling
+                        if (pollingInterval) clearInterval(pollingInterval);
+                        fetchMessages();
+                        pollingInterval = setInterval(fetchMessages, 3000);
+                        // Atualiza evento do formulário de envio
+                        const newSendMessageForm = document.getElementById('sendMessageForm');
+                        if (newSendMessageForm) {
+                            newSendMessageForm.addEventListener('submit', function (e) {
+                                e.preventDefault();
+                                const formData = new FormData(this);
+                                const url = this.action;
+                                fetch(url, {
+                                    method: 'POST',
+                                    body: formData,
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                        'Accept': 'application/json',
+                                    }
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        return response.json().then(data => {
+                                            if (data.error) {
+                                                alert(data.error);
+                                            } else if (data.errors) {
+                                                let msg = Object.values(data.errors).flat().join('\n');
+                                                alert(msg);
+                                            } else {
+                                                alert('Erro ao enviar mensagem.');
+                                            }
+                                            throw new Error('Erro na requisição');
+                                        });
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.message) {
+                                        document.getElementById('messageInput').value = '';
+                                        fetchMessages();
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                });
+                            });
+                        }
+                        // Mobile: alterna visibilidade
+                        if (window.innerWidth <= 768) {
+                            document.querySelector('.conversations-list').classList.remove('active');
+                            document.querySelector('.chat-area').classList.add('active');
+                        }
+                    });
             });
         });
     }
@@ -182,4 +248,119 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
+
+    // --- INÍCIO: Polling AJAX para buscar mensagens periodicamente ---
+    const conversationIdInput = document.getElementById('currentConversationId');
+    let pollingInterval = null;
+    let lastMessageIds = [];
+
+    function renderMessages(messages) {
+        if (!messageArea) return;
+        messageArea.innerHTML = '';
+        messages.forEach(msg => {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.classList.add(msg.sender_id == window.LaravelUserId ? 'outgoing' : 'incoming');
+            messageElement.dataset.id = msg.id;
+
+            if (msg.content_type === 'image' && msg.image_path) {
+                const imgDiv = document.createElement('div');
+                imgDiv.classList.add('message-image');
+                const img = document.createElement('img');
+                img.src = msg.image_path;
+                img.style.maxWidth = '200px';
+                img.style.maxHeight = '200px';
+                img.style.borderRadius = '8px';
+                img.style.marginBottom = '5px';
+                img.classList.add('zoomable-image');
+                imgDiv.appendChild(img);
+                messageElement.appendChild(imgDiv);
+            } else if (msg.content_type === 'file' && msg.image_path) {
+                const fileDiv = document.createElement('div');
+                fileDiv.classList.add('message-file');
+                fileDiv.style.display = 'flex';
+                fileDiv.style.alignItems = 'center';
+                fileDiv.style.gap = '6px';
+                fileDiv.innerHTML = `<span style="font-size:20px; color:#d9534f;"><i class="fas fa-file-alt"></i></span>`;
+                const a = document.createElement('a');
+                a.href = msg.image_path;
+                a.target = '_blank';
+                a.style.color = '#007bff';
+                a.style.textDecoration = 'underline';
+                a.textContent = msg.file_name || 'Arquivo enviado';
+                fileDiv.appendChild(a);
+                messageElement.appendChild(fileDiv);
+            }
+            const contentDiv = document.createElement('div');
+            contentDiv.classList.add('message-content');
+            contentDiv.textContent = msg.content;
+            messageElement.appendChild(contentDiv);
+            const timeDiv = document.createElement('div');
+            timeDiv.classList.add('message-time');
+            timeDiv.textContent = msg.created_at;
+            messageElement.appendChild(timeDiv);
+            messageArea.appendChild(messageElement);
+        });
+        messageArea.scrollTop = messageArea.scrollHeight;
+    }
+
+    function fetchMessages() {
+        if (!conversationIdInput) return;
+        const conversationId = conversationIdInput.value;
+        fetch(`/conversations/${conversationId}/messages`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.messages) {
+                    // Só atualiza se mudou
+                    const ids = data.messages.map(m => m.id);
+                    if (JSON.stringify(ids) !== JSON.stringify(lastMessageIds)) {
+                        renderMessages(data.messages);
+                        lastMessageIds = ids;
+                    }
+                }
+            })
+            .catch(error => console.error('Erro ao buscar mensagens:', error));
+    }
+
+    if (conversationIdInput) {
+        // Pega o id do usuário logado para diferenciar outgoing/incoming
+        window.LaravelUserId = conversationIdInput.dataset.userid || document.querySelector('meta[name="user-id"]')?.content || null;
+        fetchMessages();
+        pollingInterval = setInterval(fetchMessages, 3000);
+    }
+    // --- FIM: Polling AJAX ---
+
+    // --- INÍCIO: WebSocket para mensagens em tempo real ---
+    function subscribeToConversation(conversationId) {
+        if (window.Echo && conversationId) {
+            if (window.currentEchoChannel) {
+                window.currentEchoChannel.stopListening('.MessageSent');
+            }
+            window.currentEchoChannel = window.Echo.private('conversation.' + conversationId)
+                .listen('.MessageSent', (e) => {
+                    // Adiciona a mensagem recebida em tempo real
+                    if (e && e.id) {
+                        fetchMessages(); // Ou renderiza só a nova mensagem
+                    }
+                });
+        }
+    }
+    if (conversationIdInput) {
+        subscribeToConversation(conversationIdInput.value);
+    }
+    // Atualizar assinatura ao trocar de conversa
+    if (conversationsList) {
+        const conversationItems = conversationsList.querySelectorAll('.conversation-item');
+        conversationItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                setTimeout(() => {
+                    const newConversationIdInput = document.getElementById('currentConversationId');
+                    if (newConversationIdInput) {
+                        subscribeToConversation(newConversationIdInput.value);
+                    }
+                }, 500);
+            });
+        });
+    }
+    // --- FIM: WebSocket ---
 }); 

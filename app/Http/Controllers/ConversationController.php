@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use App\Events\MessageSent;
 
 class ConversationController extends Controller
 {
@@ -87,6 +88,8 @@ class ConversationController extends Controller
             'file_name' => $fileName,
         ]);
         $message->refresh();
+        // Disparar evento para WebSocket
+        event(new MessageSent($message));
         return response()->json([
             'message' => $message,
             'created_at_formatted' => $message->created_at ? $message->created_at->format('H:i') : ''
@@ -168,5 +171,23 @@ class ConversationController extends Controller
                 'avatar' => $conv->user_one_id == $userId ? $conv->userTwo->url_foto : $conv->userOne->url_foto
             ]
         ]);
+    }
+
+    // Retorna as mensagens de uma conversa em JSON (para AJAX)
+    public function messages(Conversation $conversation)
+    {
+        $this->authorize('view', $conversation);
+        $messages = $conversation->messages()->orderBy('created_at')->get()->map(function($message) {
+            return [
+                'id' => $message->id,
+                'sender_id' => $message->sender_id,
+                'content' => $message->content,
+                'content_type' => $message->content_type,
+                'image_path' => $message->image_path ? asset('storage/' . $message->image_path) : null,
+                'file_name' => $message->file_name,
+                'created_at' => $message->created_at ? $message->created_at->format('H:i') : '',
+            ];
+        });
+        return response()->json(['messages' => $messages]);
     }
 } 
