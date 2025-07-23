@@ -12,12 +12,15 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ConnectionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ConversationController;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Auth;
 
+// Rota de teste (opcional)
 Route::get('/webtest', function () {
     return 'Web funcionando!';
 });
 
-
+// Rota raiz
 Route::get('/', function () {
     return redirect()->route('login.page');
 });
@@ -49,6 +52,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/perfil/habilidade', [PerfilController::class, 'addSkill'])->name('profile.skill');
     Route::delete('/perfil/habilidade/{id}', [PerfilController::class, 'removeSkill'])->name('profile.skill.delete');
     Route::post('/perfil/remover-foto', [PerfilController::class, 'removePhoto'])->name('perfil.remover-foto');
+    // Rota para logout/desvincular Github
+    Route::post('/perfil/github-logout', [PerfilController::class, 'logoutGithub'])->name('perfil.github.logout');
     
     // Rota para visualizar perfil de outro usuário (deve ser a última rota do perfil)
     Route::get('/perfil/{id}', [PerfilController::class, 'show'])->name('perfil.show');
@@ -60,6 +65,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/contatos', [ConversationController::class, 'contacts'])->name('contacts');
     Route::post('/conversations', [ConversationController::class, 'startConversation'])->name('conversations.start');
 
+    // Rotas de páginas estáticas
     Route::get('/empregos', function () {
         return view('empregos');
     })->name('empregos');
@@ -77,17 +83,19 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/certificados', [CertificadoController::class, 'store'])->name('certificados.store');
     
     // Rotas para Repositórios
+    Route::get('/repositorios', [RepositorioController::class, 'index'])->name('repositorios.index');
     Route::get('/repositorios/atualizar', [RepositorioController::class, 'update'])->name('repositorios.atualizar');
     
     Route::get('/search', [SearchController::class, 'search'])->name('search');
     
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+    // Rotas para conexões
     Route::post('/connections/send/{userId}', [ConnectionController::class, 'send'])->name('connections.send');
     Route::post('/connections/accept/{connectionId}', [ConnectionController::class, 'accept'])->name('connections.accept');
     Route::post('/connections/reject/{connectionId}', [ConnectionController::class, 'reject'])->name('connections.reject');
+    Route::delete('/connections/{id}', [ConnectionController::class, 'destroy'])->name('connections.destroy');
 
-    
     // Rotas para Notificações
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
@@ -96,5 +104,23 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/{id}/accept-connection', [NotificationController::class, 'acceptConnection'])->name('notifications.acceptConnection');
     Route::post('/notifications/{id}/reject-connection', [NotificationController::class, 'rejectConnection'])->name('notifications.rejectConnection');
     Route::get('/notifications/recent-unread', [NotificationController::class, 'getRecentUnread'])->name('notifications.recentUnread');
-    Route::delete('/connections/{id}', [ConnectionController::class, 'destroy'])->name('connections.destroy');
+
+    // Rotas Login com Github
+    Route::get('/auth/redirect', function () {
+        return Socialite::driver('github')
+            ->with(['prompt' => 'login'])
+            ->redirect();
+    });
+
+    Route::get('/auth/callback', function () {
+        $githubUser = Socialite::driver('github')->user();   
+
+        $user = Auth::user();
+        $user->github_username = $githubUser->getNickname();
+        $user->github_token = $githubUser->token;
+        $user->github_refresh_token = $githubUser->refreshToken ?? null;
+        $user->save();
+
+        return redirect('/perfil');
+    });
 });
