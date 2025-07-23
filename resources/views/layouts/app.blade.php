@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     @stack('styles')
 </head>
-<body>
+<body class="@yield('body-class')">
     <div class="container">
         @include('partials.header')
         <div class="content">
@@ -27,6 +27,7 @@
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/search.js') }}"></script>
+    @stack('scripts')
     @yield('scripts')
 </body>
 </html> 
