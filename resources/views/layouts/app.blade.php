@@ -28,5 +28,6 @@
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/search.js') }}"></script>
     @stack('scripts')
+    @yield('scripts')
 </body>
 </html> 
