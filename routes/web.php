@@ -14,6 +14,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ConversationController;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AdminController;
 
 // Rota de teste (opcional)
 Route::get('/webtest', function () {
@@ -124,4 +125,11 @@ Route::middleware(['auth'])->group(function () {
 
         return redirect('/perfil');
     });
+});
+
+Route::middleware(['auth', 'admincheck'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::post('/admin/users/{id}/promote', [AdminController::class, 'promoteToAdmin'])->name('admin.users.promote');
+    Route::post('/admin/users/{id}/demote', [AdminController::class, 'demoteFromAdmin'])->name('admin.users.demote');
 });

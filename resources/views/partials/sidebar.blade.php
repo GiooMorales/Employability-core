@@ -24,6 +24,21 @@
             <i class="fas fa-project-diagram"></i>
             <span>Projetos</span>
         </a>
+
+        {{-- Itens exclusivos para admin --}}
+        @auth
+            @if(auth()->user()->is_admin)
+                <a href="{{ route('admin.users') }}" class="menu-item {{ request()->routeIs('admin.users') ? 'active' : '' }}">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Gerenciar Usuários</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Estatísticas</span>
+                </a>
+                {{-- Adicione mais abas de admin aqui --}}
+            @endif
+        @endauth
         
         <form action="{{ route('logout') }}" method="POST" class="menu-item">
             @csrf
