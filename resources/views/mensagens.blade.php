@@ -79,24 +79,51 @@
             
             <div class="messages" id="messageArea">
                 @forelse ($messages as $message)
-                    <div class="message {{ $message->sender_id == Auth::id() ? 'outgoing' : 'incoming' }}" data-id="{{ $message->id }}">
-                        @if ($message->content_type === 'image' && $message->image_path)
-                            <div class="message-image">
-                                <img src="{{ asset('storage/' . $message->image_path) }}" alt="Imagem enviada" style="max-width:200px; max-height:200px; border-radius:8px; margin-bottom:5px; cursor:pointer;" class="zoomable-image">
+                    <div class="message-wrapper" style="position:relative; display:flex; align-items:flex-start;">
+                        <div class="message {{ $message->sender_id == Auth::id() ? 'outgoing' : 'incoming' }}" data-id="{{ $message->id }}" style="position:relative; min-width:0; margin-left: {{ $message->sender_id == Auth::id() ? 'auto' : '0' }}; margin-right: {{ $message->sender_id == Auth::id() ? '0' : 'auto' }}; {{ $message->sender_id == Auth::id() ? 'padding-right: 32px;' : '' }}">
+                            @if ($message->sender_id == Auth::id())
+                                <div class="message-menu-hover" style="position:absolute; top:8px; right:10px; z-index:10; display:block;">
+                                    <button class="message-menu-btn" style="background:none; border:none; cursor:pointer; font-size:18px; color:#888; padding:0 4px;" onclick="toggleMessageMenu({{ $message->id }})">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <div class="message-menu" id="message-menu-{{ $message->id }}" style="display:none; position:absolute; right:0; top:28px; background:#fff; border:1px solid #ddd; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.08); z-index:10; min-width:100px;">
+                                        <button class="edit-message-btn" data-id="{{ $message->id }}" style="display:block; width:100%; background:none; border:none; padding:8px 12px; text-align:left; cursor:pointer;">Editar</button>
+                                        <button class="delete-message-btn" data-id="{{ $message->id }}" style="display:block; width:100%; background:none; border:none; padding:8px 12px; text-align:left; cursor:pointer; color:#d9534f;">Excluir</button>
+                                    </div>
+                                </div>
+                            @endif
+                            @if ($message->content_type === 'image' && $message->image_path)
+                                <div class="message-image">
+                                    <img src="{{ asset('storage/' . $message->image_path) }}" alt="Imagem enviada" style="max-width:200px; max-height:200px; border-radius:8px; margin-bottom:5px; cursor:pointer;" class="zoomable-image">
+                                </div>
+                            @elseif ($message->content_type === 'file' && $message->image_path)
+                                <div class="message-file" style="display:flex; align-items:center; gap:6px;">
+                                    <span style="font-size:20px; color:#d9534f;">
+                                        <i class="fas fa-file-alt"></i>
+                                    </span>
+                                    <a href="{{ asset('storage/' . $message->image_path) }}" target="_blank" style="color:#007bff; text-decoration:underline;">
+                                        {{ $message->file_name ?? 'Arquivo enviado' }}
+                                    </a>
+                                </div>
+                            @endif
+                            <div class="message-content">
+                                @if ($message->deleted_at)
+                                    <span style="color:#888;font-style:italic;">mensagem excluída</span>
+                                @else
+                                    {{ $message->content }}
+                                    @if ($message->edited_at)
+                                        <span style="color:#888; font-size:12px; margin-left:4px;">(editado)</span>
+                                    @endif
+                                @endif
                             </div>
-                        @elseif ($message->content_type === 'file' && $message->image_path)
-                            <div class="message-file" style="display:flex; align-items:center; gap:6px;">
-                                <span style="font-size:20px; color:#d9534f;">
-                                    <i class="fas fa-file-alt"></i>
+                            <div style="display:flex; justify-content:flex-end; align-items:center; margin-top:2px;">
+                                <span class="message-time" style="color:#888; font-size:12px; display:flex; align-items:center; gap:4px; background:transparent;">
+                                    {{ $message->created_at ? \Carbon\Carbon::parse($message->created_at)->format('H:i') : '' }}
+                                    @if ($message->sender_id == Auth::id() && !empty($message->read_at))
+                                        <span class="seen" style="color:#0d6efd; font-size:13px; margin-left:2px;">✔️ Visto</span>
+                                    @endif
                                 </span>
-                                <a href="{{ asset('storage/' . $message->image_path) }}" target="_blank" style="color:#007bff; text-decoration:underline;">
-                                    {{ $message->file_name ?? 'Arquivo enviado' }}
-                                </a>
                             </div>
-                        @endif
-                        <div class="message-content">{{ $message->content }}</div>
-                        <div class="message-time">
-                            {{ $message->created_at ? \Carbon\Carbon::parse($message->created_at)->format('H:i') : '' }}
                         </div>
                     </div>
                 @empty
@@ -152,6 +179,38 @@
 <div id="imageModal" class="image-modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); align-items:center; justify-content:center;">
     <span id="closeImageModal" style="position:absolute; top:30px; right:40px; color:#fff; font-size:40px; cursor:pointer;">&times;</span>
     <img id="modalImage" src="" style="max-width:90vw; max-height:90vh; border-radius:12px; box-shadow:0 0 20px #000;">
+</div>
+<!-- Modal de edição de mensagem -->
+<div class="modal-overlay" id="editMessageModal" style="display:none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Editar mensagem</h3>
+            <button class="modal-close" id="closeEditMessageModal" style="background:none; border:none; font-size:22px; color:#888; cursor:pointer;">&times;</button>
+        </div>
+        <div class="modal-content">
+            <textarea id="editMessageInput" rows="3" style="width:100%; border-radius:8px; border:1px solid #ddd; padding:10px; font-size:15px;"></textarea>
+        </div>
+        <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+            <button id="cancelEditMessageBtn" style="background:#f3f3f3; color:#333; border:none; border-radius:20px; padding:7px 20px; font-size:15px; cursor:pointer; transition:background 0.2s;">Cancelar</button>
+            <button id="saveEditMessageBtn" style="background:#0d6efd; color:#fff; border:none; border-radius:20px; padding:7px 20px; font-size:15px; cursor:pointer; transition:background 0.2s;">Salvar</button>
+        </div>
+    </div>
+</div>
+<!-- Modal de confirmação de exclusão -->
+<div class="modal-overlay" id="deleteMessageModal" style="display:none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Excluir mensagem</h3>
+            <button class="modal-close" id="closeDeleteMessageModal" style="background:none; border:none; font-size:22px; color:#888; cursor:pointer;">&times;</button>
+        </div>
+        <div class="modal-content">
+            <p>Tem certeza que deseja excluir esta mensagem?</p>
+        </div>
+        <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+            <button id="cancelDeleteMessageBtn" style="background:#f3f3f3; color:#333; border:none; border-radius:20px; padding:7px 20px; font-size:15px; cursor:pointer; transition:background 0.2s;">Cancelar</button>
+            <button id="confirmDeleteMessageBtn" style="background:#d9534f; color:#fff; border:none; border-radius:20px; padding:7px 20px; font-size:15px; cursor:pointer; transition:background 0.2s;">Excluir</button>
+        </div>
+    </div>
 </div>
 @endsection
 

@@ -48,32 +48,11 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 if (data.message) {
                     messageInput.value = '';
-                    const messageElement = document.createElement('div');
-                    messageElement.classList.add('message', 'outgoing');
-                    messageElement.dataset.id = data.message.id;
-
-                    const messageContent = document.createElement('div');
-                    messageContent.classList.add('message-content');
-                    messageContent.textContent = data.message.content;
-
-                    const messageTime = document.createElement('div');
-                    messageTime.classList.add('message-time');
-                    let timeString = '';
-                    if (data.created_at_formatted) {
-                        timeString = data.created_at_formatted;
-                    } else if (data.message.created_at) {
-                        const time = new Date(data.message.created_at);
-                        if (!isNaN(time)) {
-                            timeString = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                        }
+                    // Atualiza a lista de mensagens imediatamente
+                    if (typeof fetchMessages === 'function') {
+                        fetchMessages();
                     }
-                    messageTime.textContent = timeString;
-
-                    messageElement.appendChild(messageContent);
-                    messageElement.appendChild(messageTime);
-                    messageArea.appendChild(messageElement);
-
-                    messageArea.scrollTop = messageArea.scrollHeight;
+                    // Código antigo de adicionar mensagem manualmente pode ser removido se fetchMessages já renderiza tudo
                 }
             })
             .catch(error => {
@@ -363,4 +342,129 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     // --- FIM: WebSocket ---
+
+    // Função global robusta para alternar o menu de opções
+    window.toggleMessageMenu = function(messageId) {
+        // Fecha todos os outros menus
+        document.querySelectorAll('.message-menu').forEach(menu => menu.style.display = 'none');
+        const menu = document.getElementById('message-menu-' + messageId);
+        if (menu) {
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+    };
+    // Fecha o menu se clicar fora
+    if (!window._messageMenuClickListener) {
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.message-menu-hover')) {
+                document.querySelectorAll('.message-menu').forEach(menu => menu.style.display = 'none');
+            }
+        });
+        window._messageMenuClickListener = true;
+    }
+
+    let editingMessageId = null;
+    let deletingMessageId = null;
+
+    function openEditMessageModal(messageId, currentContent) {
+        editingMessageId = messageId;
+        document.getElementById('editMessageInput').value = currentContent;
+        document.getElementById('editMessageModal').style.display = 'flex';
+    }
+    function closeEditMessageModal() {
+        editingMessageId = null;
+        document.getElementById('editMessageModal').style.display = 'none';
+    }
+    function openDeleteMessageModal(messageId) {
+        deletingMessageId = messageId;
+        document.getElementById('deleteMessageModal').style.display = 'flex';
+    }
+    function closeDeleteMessageModal() {
+        deletingMessageId = null;
+        document.getElementById('deleteMessageModal').style.display = 'none';
+    }
+
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('edit-message-btn')) {
+            const messageId = e.target.dataset.id;
+            const messageDiv = document.querySelector('.message[data-id="' + messageId + '"] .message-content');
+            if (messageDiv) {
+                const currentContent = messageDiv.textContent.replace('(editado)', '').trim();
+                openEditMessageModal(messageId, currentContent);
+            }
+        }
+        if (e.target.classList.contains('delete-message-btn')) {
+            const messageId = e.target.dataset.id;
+            openDeleteMessageModal(messageId);
+        }
+    });
+
+    document.getElementById('closeEditMessageModal').onclick = closeEditMessageModal;
+    document.getElementById('cancelEditMessageBtn').onclick = closeEditMessageModal;
+    document.getElementById('closeDeleteMessageModal').onclick = closeDeleteMessageModal;
+    document.getElementById('cancelDeleteMessageBtn').onclick = closeDeleteMessageModal;
+
+    document.getElementById('saveEditMessageBtn').onclick = function() {
+        if (!editingMessageId) return;
+        const newContent = document.getElementById('editMessageInput').value.trim();
+        if (!newContent) {
+            alert('A mensagem não pode ser vazia.');
+            return;
+        }
+        fetch(`/messages/${editingMessageId}/edit`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ content: newContent })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                closeEditMessageModal();
+                if (typeof fetchMessages === 'function') fetchMessages();
+            } else if (data.error) {
+                alert(data.error);
+            }
+        })
+        .catch(() => alert('Erro ao editar mensagem.'));
+    };
+
+    document.getElementById('confirmDeleteMessageBtn').onclick = function() {
+        if (!deletingMessageId) return;
+        fetch(`/messages/${deletingMessageId}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                closeDeleteMessageModal();
+                if (typeof fetchMessages === 'function') fetchMessages();
+            } else if (data.error) {
+                alert(data.error);
+            }
+        })
+        .catch(() => alert('Erro ao excluir mensagem.'));
+    };
+
+    function applyMessageMenuHover() {
+        document.querySelectorAll('.message.outgoing').forEach(function(msg) {
+            msg.addEventListener('mouseenter', function() {
+                const menu = msg.querySelector('.message-menu-hover');
+                if (menu) menu.style.display = 'block';
+            });
+            msg.addEventListener('mouseleave', function() {
+                const menu = msg.querySelector('.message-menu-hover');
+                if (menu) menu.style.display = 'none';
+                // Fecha o menu de opções se aberto
+                const dropdown = msg.querySelector('.message-menu');
+                if (dropdown) dropdown.style.display = 'none';
+            });
+        });
+    }
 }); 

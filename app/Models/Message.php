@@ -11,7 +11,10 @@ class Message extends Model
         'sender_id',
         'content',
         'content_type',
-        'is_read',
+        'read_at',
+        'edited_at',
+        'deleted_at',
+        'deleted_content',
         'image_path',
         'file_name',
     ];

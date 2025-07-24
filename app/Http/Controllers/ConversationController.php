@@ -83,7 +83,6 @@ class ConversationController extends Controller
             'sender_id' => $userId,
             'content' => $request->input('content') ?? '',
             'content_type' => $contentType,
-            'is_read' => false,
             'image_path' => $filePath,
             'file_name' => $fileName,
         ]);
@@ -106,8 +105,8 @@ class ConversationController extends Controller
         }
         Message::where('conversation_id', $id)
             ->where('sender_id', '!=', $userId)
-            ->where('is_read', false)
-            ->update(['is_read' => true]);
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
         return response()->json(['success' => true]);
     }
 
@@ -189,5 +188,46 @@ class ConversationController extends Controller
             ];
         });
         return response()->json(['messages' => $messages]);
+    }
+
+    // Edita uma mensagem (permitir apenas uma edição)
+    public function editMessage(Request $request, $id)
+    {
+        $userId = Auth::user()->id_usuarios;
+        $message = Message::findOrFail($id);
+        if ($message->sender_id != $userId) {
+            return response()->json(['error' => 'Acesso negado'], 403);
+        }
+        if ($message->edited_at) {
+            return response()->json(['error' => 'Mensagem já foi editada uma vez'], 422);
+        }
+        if ($message->deleted_at) {
+            return response()->json(['error' => 'Mensagem já foi excluída'], 422);
+        }
+        $request->validate([
+            'content' => 'required|string|max:2000',
+        ]);
+        $message->content = $request->input('content');
+        $message->edited_at = now();
+        $message->save();
+        return response()->json(['success' => true, 'message' => $message]);
+    }
+
+    // Exclui logicamente uma mensagem
+    public function deleteMessage(Request $request, $id)
+    {
+        $userId = Auth::user()->id_usuarios;
+        $message = Message::findOrFail($id);
+        if ($message->sender_id != $userId) {
+            return response()->json(['error' => 'Acesso negado'], 403);
+        }
+        if ($message->deleted_at) {
+            return response()->json(['error' => 'Mensagem já foi excluída'], 422);
+        }
+        $message->deleted_at = now();
+        $message->deleted_content = $message->content;
+        $message->content = null;
+        $message->save();
+        return response()->json(['success' => true, 'message' => $message]);
     }
 } 

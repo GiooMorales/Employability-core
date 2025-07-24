@@ -65,6 +65,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/conversations/{conversation}/messages', [ConversationController::class, 'messages'])->name('conversations.messages');
     Route::get('/contatos', [ConversationController::class, 'contacts'])->name('contacts');
     Route::post('/conversations', [ConversationController::class, 'startConversation'])->name('conversations.start');
+    Route::post('/conversations/{id}/read', [ConversationController::class, 'markAsRead'])->name('conversations.markAsRead');
+    Route::put('/messages/{id}/edit', [ConversationController::class, 'editMessage'])->name('messages.edit');
+    Route::delete('/messages/{id}/delete', [ConversationController::class, 'deleteMessage'])->name('messages.delete');
 
     // Rotas de páginas estáticas
     Route::get('/empregos', function () {
