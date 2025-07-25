@@ -12,47 +12,27 @@
 @section('content')
 <div class="main-content">
     <div class="content-columns">
-        <div class="left-sidebar">
-            <div class="profile-card">
-                <div class="profile-cover"></div>
-                <div class="profile-info">
-                <img src="{{ Auth::user()->url_foto ? asset('storage/' . Auth::user()->url_foto) : asset('images/default-avatar.png') }}" alt="{{ Auth::user()->nome }}" class="user-avatar">
-                    
-                    <h3 class="profile-name">{{ $nome }}</h3>
-                    <p class="profile-title">{{ $trab_atual }}</p>
-                    <div class="profile-stats">
-                        <div class="stat">
-                            <div class="stat-number">{{ $estatisticas['conexoes'] ?? 0 }}</div>
-                            <div class="stat-label">Conexões</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-number">{{ $estatisticas['projetos'] ?? 0 }}</div>
-                            <div class="stat-label">Projetos</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-number">{{ $estatisticas['contribuicoes'] ?? 0 }}</div>
-                            <div class="stat-label">Contribuições</div>
-                        </div>
+        <div class="profile-card">
+            <div class="profile-cover"></div>
+            <div class="profile-info">
+            <img src="{{ Auth::user()->url_foto ? asset('storage/' . Auth::user()->url_foto) : asset('images/default-avatar.png') }}" alt="{{ Auth::user()->nome }}" class="user-avatar">
+                
+                <h3 class="profile-name">{{ $nome }}</h3>
+                <p class="profile-title">{{ $trab_atual }}</p>
+                <div class="profile-stats">
+                    <div class="stat">
+                        <div class="stat-number">{{ $estatisticas['conexoes'] ?? 0 }}</div>
+                        <div class="stat-label">Conexões</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">{{ $estatisticas['projetos'] ?? 0 }}</div>
+                        <div class="stat-label">Projetos</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">{{ $estatisticas['contribuicoes'] ?? 0 }}</div>
+                        <div class="stat-label">Contribuições</div>
                     </div>
                 </div>
-            </div>
-
-            <div class="trending-card">
-                <h3 class="card-title">Meus Repositórios</h3>
-                @for($i = 0; $i < 2; $i++)
-                    <div class="repo-card">
-                        <div class="repo-header">
-                            <div class="repo-name"></div>
-                            <div class="repo-visibility"></div>
-                        </div>
-                        <div class="repo-description"></div>
-                        <div class="repo-stats">
-                            <div class="repo-stat"><i class="fas fa-star"></i></div>
-                            <div class="repo-stat"><i class="fas fa-code-branch"></i></div>
-                            <div class="repo-stat"><i class="fas fa-code"></i></div>
-                        </div>
-                    </div>
-                @endfor
             </div>
         </div>
 

@@ -3,11 +3,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.querySelector('.sidebar');
     const toggleButton = document.createElement('button');
     toggleButton.className = 'btn-toggle-sidebar';
+    toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
     
     document.querySelector('.header').prepend(toggleButton);
     
+    // Criar overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'sidebar-overlay';
+    document.body.appendChild(overlay);
+    
     toggleButton.addEventListener('click', function() {
         sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    });
+
+    // Fechar sidebar ao clicar no overlay
+    overlay.addEventListener('click', function() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
     });
 
     // Fechar sidebar ao clicar fora em dispositivos móveis
@@ -18,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (!isClickInsideSidebar && !isClickOnToggleButton && sidebar.classList.contains('active')) {
                 sidebar.classList.remove('active');
+                overlay.classList.remove('active');
             }
         }
     });
