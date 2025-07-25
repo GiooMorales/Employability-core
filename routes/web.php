@@ -15,6 +15,9 @@ use App\Http\Controllers\ConversationController;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PostagemController;
+use App\Http\Controllers\ComentarioController;
+use App\Http\Controllers\LikeController;
 
 // Rota de teste (opcional)
 Route::get('/webtest', function () {
@@ -31,6 +34,31 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login.pag
 Route::post('/login', [LoginController::class, 'login'])->name('login.attempt');
 Route::get('/registrar', [RegisterController::class, 'showRegisterForm'])->name('registrar');
 Route::post('/registrar', [RegisterController::class, 'registrar'])->name('registrar.store');
+
+// Rotas públicas de postagens
+Route::get('/postagens', [PostagemController::class, 'index'])->name('postagens.index');
+Route::get('/postagens/{id}', [PostagemController::class, 'show'])->name('postagens.show');
+
+// Rotas protegidas para admins (CRUD de postagens)
+Route::middleware(['auth', 'admincheck'])->group(function () {
+    Route::get('/postagens/criar', [PostagemController::class, 'create'])->name('postagens.create');
+    Route::post('/postagens', [PostagemController::class, 'store'])->name('postagens.store');
+    Route::get('/postagens/{id}/editar', [PostagemController::class, 'edit'])->name('postagens.edit');
+    Route::put('/postagens/{id}', [PostagemController::class, 'update'])->name('postagens.update');
+    Route::delete('/postagens/{id}', [PostagemController::class, 'destroy'])->name('postagens.destroy');
+});
+
+// Rotas para comentários (autenticado)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/postagens/{postagem_id}/comentarios', [ComentarioController::class, 'index'])->name('comentarios.index');
+    Route::post('/postagens/{postagem_id}/comentarios', [ComentarioController::class, 'store'])->name('comentarios.store');
+    // Likes
+    Route::get('/postagens/{postagem_id}/likes', [LikeController::class, 'index'])->name('likes.index');
+    Route::post('/postagens/{postagem_id}/like', [LikeController::class, 'toggle'])->name('likes.toggle');
+});
+
+// Compartilhar postagem no chat (autenticado)
+Route::middleware(['auth'])->post('/postagens/{id}/compartilhar', [PostagemController::class, 'share'])->name('postagens.share');
 
 // Rotas protegidas
 Route::middleware(['auth'])->group(function () {

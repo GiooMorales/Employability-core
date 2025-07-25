@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Connection;
 use App\Observers\ConnectionObserver;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,5 +23,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Connection::observe(ConnectionObserver::class);
+        if (request()->header('x-forwarded-proto') == 'https' || app()->environment('production')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
 }

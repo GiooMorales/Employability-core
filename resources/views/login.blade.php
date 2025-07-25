@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" href="{{ asset('/css/login.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 </head>
 <body>
     <div class="form-container">

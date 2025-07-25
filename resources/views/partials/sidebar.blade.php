@@ -45,3 +45,10 @@
         </form>
     </nav>
 </aside> 
+<!-- Barra inferior para mobile -->
+<div class="bottom-navbar">
+    <a href="{{ route('home') }}" class="@if(request()->routeIs('home')) active @endif"><i class="fa fa-home"></i><span class="nav-label">Início</span></a>
+    <a href="{{ route('postagens.index') }}" class="@if(request()->routeIs('postagens.index')) active @endif"><i class="fa fa-bullhorn"></i><span class="nav-label">Posts</span></a>
+    <a href="{{ route('perfil') }}" class="@if(request()->routeIs('perfil')) active @endif"><i class="fa fa-user"></i><span class="nav-label">Perfil</span></a>
+    <a href="{{ route('mensagens') }}" class="@if(request()->routeIs('mensagens')) active @endif"><i class="fa fa-comments"></i><span class="nav-label">Chat</span></a>
+</div> 

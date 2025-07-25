@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ asset('/css/perfil.css') }}">
-    <title>Perfil - {{ $usuario->nome }}</title>
-</head>
-<body>
 @extends('layouts.app')
+
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/perfil.css') }}">
+@endpush
 
 @section('title', 'Perfil - ' . $usuario->nome)
 
@@ -259,6 +254,3 @@ function compartilharPerfil() {
     });
 </script>
 @endsection
-
-</body>
-</html>

@@ -760,3 +760,430 @@ body {
         height: 28px;
     }
 }
+
+/* --- Postagens Feed Custom --- */
+.feed .list-group-item {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 24px 24px 16px 24px;
+  margin-bottom: 24px;
+  border: none;
+  transition: box-shadow 0.2s;
+}
+.feed .list-group-item:hover {
+  box-shadow: 0 4px 16px rgba(114,47,55,0.10);
+}
+.feed h4 {
+  font-size: 1.4rem;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+.feed .text-muted {
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+.feed img.img-fluid {
+  border-radius: 8px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+.feed p {
+  font-size: 1.08rem;
+  color: #333;
+}
+.feed .btn {
+  border-radius: 20px;
+  font-size: 0.98rem;
+  margin-right: 6px;
+  margin-bottom: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+.feed .btn-outline-primary:hover,
+.feed .btn-outline-success:hover,
+.feed .btn-outline-info:hover {
+  color: #fff;
+}
+.feed .btn-outline-primary:hover { background: var(--primary); }
+.feed .btn-outline-success:hover { background: var(--success); }
+.feed .btn-outline-info:hover { background: #0dcaf0; }
+.feed .dropdown-menu {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  border: none;
+}
+.feed .dropdown-item {
+  border-radius: 8px;
+  margin-bottom: 2px;
+  transition: background 0.2s;
+}
+.feed .dropdown-item:hover {
+  background: var(--bg-hover);
+  color: var(--primary);
+}
+.feed input[type="text"],
+.feed textarea,
+.feed input[type="file"] {
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+.feed textarea {
+  min-height: 60px;
+}
+.feed .card {
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  border: none;
+}
+.feed .card-body h4 {
+  color: var(--primary);
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+.feed .btn-success {
+  background: var(--primary);
+  border: none;
+}
+.feed .btn-success:hover {
+  background: #a94442;
+}
+.feed .alert-success {
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-bottom: 16px;
+}
+
+/* --- Estilo Instagram para /postagens --- */
+.instagram-feed {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 32px 0 32px 0;
+}
+.instagram-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+  margin-bottom: 36px;
+  border: 1px solid #e6e6e6;
+  overflow: hidden;
+}
+.instagram-card-header {
+  display: flex;
+  align-items: center;
+  padding: 18px 18px 0 18px;
+}
+.instagram-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 14px;
+  border: 2px solid #f7b731;
+}
+.instagram-username {
+  font-weight: bold;
+  color: #262626;
+  font-size: 1.08rem;
+}
+.instagram-date {
+  color: #999;
+  font-size: 0.95rem;
+  margin-left: 8px;
+}
+.instagram-card-img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  display: block;
+  margin: 18px 0 0 0;
+}
+.instagram-card-body {
+  padding: 18px;
+  font-size: 1.08rem;
+  color: #222;
+}
+.instagram-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 18px 18px 18px;
+}
+.instagram-actions .like-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1.7rem;
+  color: #fff;
+  transition: color 0.2s;
+}
+.instagram-actions .like-btn.liked i {
+  color: #c0392b;
+}
+.instagram-actions .like-btn i {
+  transition: color 0.2s;
+}
+.instagram-actions .like-btn:hover i {
+  color: #c0392b;
+}
+.instagram-actions .comment-btn,
+.instagram-actions .share-btn {
+  background: none;
+  border: none;
+  color: #262626;
+  font-size: 1.5rem;
+  margin-right: 8px;
+  transition: color 0.2s;
+}
+.instagram-actions .comment-btn:hover,
+.instagram-actions .share-btn:hover {
+  color: #f7b731;
+}
+.instagram-likes {
+  font-weight: bold;
+  color: #262626;
+  margin-left: 6px;
+  font-size: 1.01rem;
+}
+.instagram-card-content {
+  padding: 0 18px 18px 18px;
+  color: #222;
+  font-size: 1.08rem;
+}
+.instagram-card-content p {
+  margin-bottom: 0;
+}
+@media (max-width: 600px) {
+  body, html {
+    width: 100vw;
+    overflow-x: hidden;
+  }
+  .container, .main-content, .content, .content-columns {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+  }
+  .main-content {
+    padding: 0 0 60px 0 !important;
+    margin-top: 0 !important;
+  }
+  .content-columns {
+    display: block !important;
+  }
+  .feed .list-group-item, .instagram-card, .profile-card, .card, .post-creation {
+    border-radius: 10px !important;
+    margin: 10px 0 !important;
+    padding: 12px 8px !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  }
+  .feed img.img-fluid, .instagram-card-img, .post-image {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 8px !important;
+  }
+  .post-header, .post-footer, .profile-card, .trending-card, .job-card, .repo-card {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+  .post-input, .search-input, input, textarea {
+    font-size: 1rem !important;
+    padding: 10px !important;
+    border-radius: 8px !important;
+  }
+  .bottom-navbar {
+    height: 56px !important;
+    font-size: 1.2rem !important;
+  }
+  .chat-post-card {
+    max-width: 98vw !important;
+    min-width: 0 !important;
+    margin: 12px 0 8px 0 !important;
+  }
+}
+
+/* Card de compartilhamento de postagem no chat - visual de balão */
+.chat-post-card {
+  max-width: 320px;
+  min-width: 220px;
+  background: #f7f8fa;
+  border-radius: 18px 18px 18px 6px;
+  box-shadow: 0 4px 18px rgba(114,47,55,0.10);
+  border: 1px solid #e3e3e3;
+  overflow: hidden;
+  margin: 18px 0 8px 18px;
+  transition: box-shadow 0.18s, transform 0.18s;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 6px;
+}
+.chat-post-card:before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: -16px;
+  width: 0;
+  height: 0;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-right: 16px solid #f7f8fa;
+  filter: drop-shadow(-2px 2px 2px rgba(114,47,55,0.07));
+}
+.chat-post-card:hover {
+  box-shadow: 0 8px 28px rgba(114,47,55,0.16);
+  transform: translateY(-3px) scale(1.025);
+}
+.chat-post-card-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px 0 16px;
+  background: transparent;
+}
+.chat-post-card-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+.chat-post-card-username {
+  font-weight: 700;
+  color: #2d2d2d;
+  font-size: 1.08rem;
+  margin-right: 8px;
+}
+.chat-post-card-date {
+  color: #b0b0b0;
+  font-size: 0.89rem;
+  font-weight: 400;
+}
+.chat-post-card-img {
+  width: 100%;
+  height: 120px;
+  max-width: 100%;
+  max-height: 120px;
+  object-fit: cover;
+  display: block;
+  margin: 12px 0 0 0;
+  border-radius: 0 0 14px 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+.chat-post-card-content {
+  padding: 10px 16px 10px 16px;
+  color: #232323;
+  font-size: 1.01rem;
+}
+.chat-post-card-content p {
+  margin-bottom: 0;
+  font-size: 0.97rem;
+  color: #555;
+}
+.chat-post-card-content .chat-post-title {
+  font-size: 1.13rem;
+  font-weight: 600;
+  color: #2d2d2d;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+/* Card de compartilhamento de postagem no chat - balão vinho para mensagens enviadas (forçado) */
+.chat-post-card.outgoing {
+  background: #722F37 !important;
+  border: 1.5px solid #722F37 !important;
+  color: #fff !important;
+}
+.chat-post-card.outgoing .chat-post-card-username,
+.chat-post-card.outgoing .chat-post-title {
+  color: #fff !important;
+}
+.chat-post-card.outgoing .chat-post-card-date {
+  color: #f7b731 !important;
+}
+.chat-post-card.outgoing .chat-post-card-content p {
+  color: #f8e9e9 !important;
+}
+.chat-post-card.outgoing .chat-post-card-img {
+  border-radius: 0 0 14px 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+}
+.chat-post-card.outgoing:before {
+  border-right: 16px solid #722F37 !important;
+}
+
+/* Card de compartilhamento de postagem no chat - alinhamento e visual de balão aprimorado */
+.chat-post-card {
+  max-width: 320px;
+  width: 100%;
+  min-width: 180px;
+  display: block;
+  border-radius: 18px 18px 18px 6px;
+  box-shadow: 0 6px 24px rgba(114,47,55,0.16);
+  transition: box-shadow 0.18s, transform 0.18s;
+  margin: 18px 0 8px 0;
+  position: relative;
+}
+.chat-post-card.outgoing {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  border-radius: 18px 18px 6px 18px !important;
+}
+.chat-post-card:not(.outgoing) {
+  margin-right: auto !important;
+  margin-left: 0 !important;
+  border-radius: 18px 18px 18px 6px !important;
+}
+
+/* Sidebar some no mobile, barra inferior aparece */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none !important;
+  }
+  .bottom-navbar {
+    display: flex !important;
+  }
+  .main-content {
+    margin-left: 0 !important;
+    width: 100vw !important;
+    padding-bottom: 60px !important;
+  }
+}
+
+.bottom-navbar {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 56px;
+  background: #fff;
+  border-top: 1px solid #eee;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+  z-index: 9999;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 8px;
+}
+.bottom-navbar a {
+  flex: 1 1 0;
+  text-align: center;
+  color: #722F37;
+  font-size: 1.6rem;
+  padding: 6px 0 0 0;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.bottom-navbar a.active, .bottom-navbar a:active {
+  color: #c0392b;
+}
+.bottom-navbar a .nav-label {
+  display: block;
+  font-size: 0.75rem;
+  margin-top: 2px;
+  color: #888;
+}

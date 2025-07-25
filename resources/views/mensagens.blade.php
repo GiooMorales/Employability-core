@@ -16,6 +16,20 @@
 .clip-label:hover i.fas.fa-paperclip {
     color: #084298 !important;
 }
+.messages {
+  display: flex;
+  flex-direction: column;
+}
+.chat-post-card.outgoing {
+  align-self: flex-end !important;
+  margin-right: 8px !important;
+  margin-left: auto !important;
+}
+.chat-post-card:not(.outgoing) {
+  align-self: flex-start !important;
+  margin-left: 8px !important;
+  margin-right: auto !important;
+}
 </style>
 @endpush
 
@@ -79,26 +93,48 @@
             
             <div class="messages" id="messageArea">
                 @forelse ($messages as $message)
-                    <div class="message {{ $message->sender_id == Auth::id() ? 'outgoing' : 'incoming' }}" data-id="{{ $message->id }}">
-                        @if ($message->content_type === 'image' && $message->image_path)
-                            <div class="message-image">
-                                <img src="{{ asset('storage/' . $message->image_path) }}" alt="Imagem enviada" style="max-width:200px; max-height:200px; border-radius:8px; margin-bottom:5px; cursor:pointer;" class="zoomable-image">
-                            </div>
-                        @elseif ($message->content_type === 'file' && $message->image_path)
-                            <div class="message-file" style="display:flex; align-items:center; gap:6px;">
-                                <span style="font-size:20px; color:#d9534f;">
-                                    <i class="fas fa-file-alt"></i>
-                                </span>
-                                <a href="{{ asset('storage/' . $message->image_path) }}" target="_blank" style="color:#007bff; text-decoration:underline;">
-                                    {{ $message->file_name ?? 'Arquivo enviado' }}
-                                </a>
-                            </div>
+                    @if($message->content_type === 'post_share')
+                        @php
+                            $post = \App\Models\Postagem::find($message->content);
+                        @endphp
+                        @if($post)
+                            <a href="{{ route('postagens.show', $post->id) }}" class="chat-post-card{{ $message->sender_id == Auth::id() ? ' outgoing' : '' }}">
+                                <div class="chat-post-card-header" style="display:flex;align-items:center;gap:8px;">
+                                    <img src="{{ $post->user->url_foto ? asset('storage/' . $post->user->url_foto) : asset('images/default-avatar.png') }}" class="chat-post-card-avatar" alt="avatar" style="width:28px;height:28px;">
+                                    <span class="chat-post-card-username" style="display:inline-block;vertical-align:middle;">{{ $post->user->nome ?? 'Admin' }}</span>
+                                    <span class="chat-post-card-date" style="display:inline-block;vertical-align:middle;">{{ $post->created_at->diffForHumans() }}</span>
+                                </div>
+                                @if($post->imagem)
+                                    <img src="{{ asset('storage/' . $post->imagem) }}" class="chat-post-card-img" alt="Imagem da postagem" style="height:120px;max-height:120px;width:auto;object-fit:cover;border-radius:0 0 14px 14px;">
+                                @endif
+                                <div class="chat-post-card-content">
+                                    <div class="chat-post-title">{{ $post->titulo }}</div>
+                                    <p>{{ Str::limit($post->conteudo, 70) }}</p>
+                                </div>
+                            </a>
                         @endif
-                        <div class="message-content">{{ $message->content }}</div>
-                        <div class="message-time">
-                            {{ $message->created_at ? \Carbon\Carbon::parse($message->created_at)->format('H:i') : '' }}
+                    @else
+                        <div class="message {{ $message->sender_id == Auth::id() ? 'outgoing' : 'incoming' }}" data-id="{{ $message->id }}">
+                            @if ($message->content_type === 'image' && $message->image_path)
+                                <div class="message-image">
+                                    <img src="{{ asset('storage/' . $message->image_path) }}" alt="Imagem enviada" style="max-width:200px; max-height:200px; border-radius:8px; margin-bottom:5px; cursor:pointer;" class="zoomable-image">
+                                </div>
+                            @elseif ($message->content_type === 'file' && $message->image_path)
+                                <div class="message-file" style="display:flex; align-items:center; gap:6px;">
+                                    <span style="font-size:20px; color:#d9534f;">
+                                        <i class="fas fa-file-alt"></i>
+                                    </span>
+                                    <a href="{{ asset('storage/' . $message->image_path) }}" target="_blank" style="color:#007bff; text-decoration:underline;">
+                                        {{ $message->file_name ?? 'Arquivo enviado' }}
+                                    </a>
+                                </div>
+                            @endif
+                            <div class="message-content">{{ $message->content }}</div>
+                            <div class="message-time">
+                                {{ $message->created_at ? \Carbon\Carbon::parse($message->created_at)->format('H:i') : '' }}
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 @empty
                     <div class="select-conversation-placeholder">
                         <i class="far fa-comments"></i>
@@ -154,6 +190,64 @@
     <img id="modalImage" src="" style="max-width:90vw; max-height:90vh; border-radius:12px; box-shadow:0 0 20px #000;">
 </div>
 @endsection
+
+<style>
+.chat-post-card {
+  max-width: 320px;
+  min-width: 180px;
+  display: block;
+  border-radius: 18px 18px 18px 6px;
+  box-shadow: 0 6px 24px rgba(114,47,55,0.16);
+  transition: box-shadow 0.18s, transform 0.18s;
+  margin: 18px 0 8px 0;
+  position: relative;
+  padding: 0;
+  width: auto !important;
+}
+.chat-post-card.outgoing {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  border-radius: 18px 18px 6px 18px !important;
+  background: #722F37 !important;
+  border: 1.5px solid #722F37 !important;
+  color: #fff !important;
+}
+.chat-post-card:not(.outgoing) {
+  margin-right: auto !important;
+  margin-left: 0 !important;
+  border-radius: 18px 18px 18px 6px !important;
+  background: #f7f8fa !important;
+  border: 1px solid #e3e3e3 !important;
+  color: #232323 !important;
+}
+.chat-post-card.outgoing .chat-post-card-username,
+.chat-post-card.outgoing .chat-post-title {
+  color: #fff !important;
+}
+.chat-post-card.outgoing .chat-post-card-date {
+  color: #f7b731 !important;
+}
+.chat-post-card.outgoing .chat-post-card-content p {
+  color: #f8e9e9 !important;
+}
+.chat-post-card.outgoing .chat-post-card-img {
+  border-radius: 0 0 14px 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+}
+.chat-post-card.outgoing:before {
+  border-right: 16px solid #722F37 !important;
+}
+.chat-post-card:not(.outgoing) .chat-post-card-username,
+.chat-post-card:not(.outgoing) .chat-post-title {
+  color: #2d2d2d !important;
+}
+.chat-post-card:not(.outgoing) .chat-post-card-date {
+  color: #b0b0b0 !important;
+}
+.chat-post-card:not(.outgoing) .chat-post-card-content p {
+  color: #555 !important;
+}
+</style>
 
 @push('scripts')
 <script src="{{ asset('js/chat.js') }}"></script>
