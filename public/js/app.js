@@ -5,7 +5,10 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleButton.className = 'btn-toggle-sidebar';
     toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
     
-    document.querySelector('.header').prepend(toggleButton);
+    // Só adicionar o botão de toggle em telas maiores que 768px
+    if (window.innerWidth > 768) {
+        document.querySelector('.header').prepend(toggleButton);
+    }
     
     // Criar overlay
     const overlay = document.createElement('div');
