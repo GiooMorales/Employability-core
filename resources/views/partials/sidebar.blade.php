@@ -28,13 +28,9 @@
         {{-- Itens exclusivos para admin --}}
         @auth
             @if(auth()->user()->is_admin)
-                <a href="{{ route('admin.users') }}" class="menu-item {{ request()->routeIs('admin.users') ? 'active' : '' }}">
+                <a href="{{ route('admin.dashboard') }}" class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                     <i class="fas fa-users-cog"></i>
-                    <span>Gerenciar Usuários</span>
-                </a>
-                <a href="#" class="menu-item">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Estatísticas</span>
+                    <span>Painel de Admin</span>
                 </a>
                 {{-- Adicione mais abas de admin aqui --}}
             @endif
