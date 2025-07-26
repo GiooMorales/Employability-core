@@ -81,7 +81,7 @@
                             <p>{{ Str::limit($postagem->conteudo, 200) }}</p>
                             @if($postagem->imagem)
                                 <div class="post-image">
-                                    <img src="{{ asset('storage/' . $postagem->imagem) }}" alt="Imagem da postagem">
+                                    <img src="{{ asset('storage/' . $postagem->imagem) }}" alt="Imagem da postagem" onclick="showImageModal('{{ asset('storage/' . $postagem->imagem) }}')" style="cursor: pointer;">
                                 </div>
                             @endif
                         </div>
@@ -185,7 +185,32 @@
     </div>
 </div>
 
+<!-- Modal de visualização de imagem -->
+<div id="imageModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="position: relative; max-width: 90vw; max-height: 90vh;">
+        <button onclick="hideImageModal()" style="position: absolute; top: -40px; right: 0; background: none; border: none; color: white; font-size: 30px; cursor: pointer; z-index: 2001;">×</button>
+        <img id="modalImage" src="" alt="Imagem em tamanho completo" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+    </div>
+</div>
+
 <script>
+// Funções para o modal de imagem
+function showImageModal(imageSrc) {
+    document.getElementById('modalImage').src = imageSrc;
+    document.getElementById('imageModal').style.display = 'flex';
+}
+
+function hideImageModal() {
+    document.getElementById('imageModal').style.display = 'none';
+}
+
+// Fechar modal de imagem ao clicar fora
+document.getElementById('imageModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hideImageModal();
+    }
+});
+
 // Funções para o modal de compartilhamento
 function showShareModal(postId) {
     document.getElementById('shareModal').style.display = 'flex';

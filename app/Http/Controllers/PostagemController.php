@@ -59,7 +59,7 @@ class PostagemController extends Controller
             $data['imagem'] = $request->file('imagem')->store('postagens', 'public');
         }
         Postagem::create($data);
-        return redirect()->route('postagens.index')->with('success', 'Postagem criada com sucesso!');
+        return redirect()->route('home')->with('success', 'Postagem criada com sucesso!');
     }
 
     // Formulário de edição (apenas admin)

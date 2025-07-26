@@ -168,25 +168,49 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (newMessageBtn) {
+        console.log('Botão de nova mensagem encontrado');
         newMessageBtn.addEventListener('click', function() {
+            console.log('Botão de nova mensagem clicado');
+            console.log('Modal antes:', newMessageModal.style.display);
             newMessageModal.classList.add('active');
+            newMessageModal.style.display = 'flex';
+            console.log('Modal depois:', newMessageModal.style.display);
             loadContacts();
         });
+    } else {
+        console.log('Botão de nova mensagem NÃO encontrado');
     }
 
     if (closeNewMessageModal) {
         closeNewMessageModal.addEventListener('click', function() {
             newMessageModal.classList.remove('active');
         });
+    } else {
+        console.log('Botão de fechar modal NÃO encontrado');
+    }
+
+    if (newMessageModal) {
+        console.log('Modal de nova mensagem encontrado');
+        console.log('Modal display inicial:', newMessageModal.style.display);
+        console.log('Modal classes:', newMessageModal.className);
+    } else {
+        console.log('Modal de nova mensagem NÃO encontrado');
     }
 
     function loadContacts() {
+        console.log('Carregando contatos...');
         fetch('/contatos')
-            .then(response => response.json())
+            .then(response => {
+                console.log('Resposta da API:', response);
+                return response.json();
+            })
             .then(data => {
+                console.log('Dados dos contatos:', data);
                 renderContacts(data.contacts);
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Erro ao carregar contatos:', error);
+            });
     }
 
     function renderContacts(contacts) {
@@ -200,11 +224,24 @@ document.addEventListener('DOMContentLoaded', function () {
             const contactItem = document.createElement('div');
             contactItem.classList.add('contact-item');
             contactItem.dataset.id = contact.id;
+            
+            // Criar avatar com inicial se não tiver foto
+            let avatarHtml = '';
+            if (contact.avatar) {
+                avatarHtml = `<img src="/storage/${contact.avatar}" alt="${contact.name}" class="contact-avatar">`;
+            } else {
+                const initial = contact.name.charAt(0).toUpperCase();
+                avatarHtml = `<div class="contact-avatar-initial">${initial}</div>`;
+            }
+            
             contactItem.innerHTML = `
-                <img src="${contact.avatar || 'https://placehold.co/40x40'}" alt="${contact.name}" class="contact-avatar">
+                ${avatarHtml}
                 <div class="contact-info">
                     <div class="contact-name">${contact.name}</div>
-                    <div class="contact-title">${contact.title || ''}</div>
+                    <div class="contact-title">Conexão</div>
+                </div>
+                <div class="contact-arrow">
+                    <i class="fas fa-chevron-right"></i>
                 </div>
             `;
             contactItem.addEventListener('click', function() {
@@ -363,4 +400,19 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     // --- FIM: WebSocket ---
+    
+    // Função de teste para o modal
+    window.testModal = function() {
+        console.log('Testando modal...');
+        if (newMessageModal) {
+            console.log('Modal encontrado, abrindo...');
+            newMessageModal.classList.add('active');
+            newMessageModal.style.display = 'flex';
+            newMessageModal.style.visibility = 'visible';
+            newMessageModal.style.opacity = '1';
+            console.log('Modal aberto!');
+        } else {
+            console.log('Modal NÃO encontrado!');
+        }
+    };
 }); 

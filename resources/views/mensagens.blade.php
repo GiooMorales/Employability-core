@@ -39,7 +39,7 @@
     <div class="conversations-list {{ $selectedConversation ?? 'active' }}">
         <div class="conversations-header">
             <div class="conversations-title">Mensagens</div>
-            <button class="new-message-btn" id="newMessageBtn">
+            <button class="new-message-btn" id="newMessageBtn" style="display: flex !important; align-items: center !important; justify-content: center !important;">
                 <i class="fas fa-plus"></i>
             </button>
         </div>

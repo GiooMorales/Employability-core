@@ -139,15 +139,46 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/{id}/reject-connection', [NotificationController::class, 'rejectConnection'])->name('notifications.rejectConnection');
     Route::get('/notifications/recent-unread', [NotificationController::class, 'getRecentUnread'])->name('notifications.recentUnread');
 
-    // Rotas Login com Github
-    Route::get('/auth/redirect', function () {
+});
+
+// Rotas Login com Github (fora do middleware auth)
+Route::get('/auth/redirect', function () {
+    try {
         return Socialite::driver('github')
             ->with(['prompt' => 'login'])
             ->redirect();
-    });
+    } catch (\Exception $e) {
+        \Log::error('Erro no redirect do GitHub: ' . $e->getMessage());
+        return redirect('/perfil')->with('error', 'Erro ao redirecionar para GitHub: ' . $e->getMessage());
+    }
+});
 
-    Route::get('/auth/callback', function () {
+// Rota de teste para verificar se o Socialite está funcionando
+Route::get('/test-github', function () {
+    try {
+        $redirectUrl = Socialite::driver('github')->redirectUrl();
+        return response()->json([
+            'success' => true,
+            'redirect_url' => $redirectUrl,
+            'config' => config('services.github')
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ]);
+    }
+});
+
+Route::get('/auth/callback', function () {
+    try {
         $githubUser = Socialite::driver('github')->user();   
+        
+        // Verificar se o usuário está logado
+        if (!Auth::check()) {
+            // Se não estiver logado, redirecionar para login
+            return redirect('/login')->with('error', 'Você precisa estar logado para conectar com o GitHub.');
+        }
 
         $user = Auth::user();
         $user->github_username = $githubUser->getNickname();
@@ -155,8 +186,11 @@ Route::middleware(['auth'])->group(function () {
         $user->github_refresh_token = $githubUser->refreshToken ?? null;
         $user->save();
 
-        return redirect('/perfil');
-    });
+        return redirect('/perfil')->with('success', 'GitHub conectado com sucesso!');
+    } catch (\Exception $e) {
+        \Log::error('Erro no callback do GitHub: ' . $e->getMessage());
+        return redirect('/perfil')->with('error', 'Erro ao conectar com GitHub. Verifique as configurações.');
+    }
 });
 
 Route::middleware(['auth', 'admincheck'])->group(function () {

@@ -41,6 +41,8 @@
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease-in-out;
+    z-index: 10;
+    position: relative;
 }
 
 .new-message-btn:hover {
@@ -235,12 +237,14 @@
 
 .modal {
     background: white;
-    border-radius: 8px;
+    border-radius: 20px;
     width: 90%;
     max-width: 500px;
     max-height: 90vh;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
 }
 
 .modal-header {
@@ -249,12 +253,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: linear-gradient(135deg, #722F37, #8b5cf6);
+    color: white;
+    border-radius: 8px 8px 0 0;
 }
 
 .modal-title {
     font-size: 1.2em;
     font-weight: 600;
     margin: 0;
+    color: white;
 }
 
 .modal-close {
@@ -262,7 +270,7 @@
     border: none;
     font-size: 1.5em;
     cursor: pointer;
-    color: #666;
+    color: white;
 }
 
 .modal-content {
@@ -272,36 +280,50 @@
 
 .contact-search {
     width: 100%;
-    padding: 8px;
+    padding: 15px;
     border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    margin-bottom: 15px;
+    border-radius: 25px;
+    margin: 20px;
+    font-size: 16px;
+    box-sizing: border-box;
 }
 
 .contact-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .contact-item {
     display: flex;
     align-items: center;
-    padding: 10px;
-    border-radius: 4px;
+    padding: 15px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .contact-item:hover {
-    background-color: #f5f5f5;
+    background-color: #f8f9fa;
 }
 
-.contact-avatar {
-    width: 40px;
-    height: 40px;
+.contact-avatar, .contact-avatar-initial {
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
-    margin-right: 10px;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-avatar-initial {
+    background: linear-gradient(135deg, #722F37, #8b5cf6);
+    color: white;
+    font-weight: 600;
+    font-size: 1.1em;
 }
 
 .contact-info {
@@ -309,13 +331,19 @@
 }
 
 .contact-name {
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 2px;
+    color: #333;
 }
 
 .contact-title {
     font-size: 0.9em;
     color: #666;
+}
+
+.contact-arrow {
+    color: #ccc;
+    font-size: 14px;
 }
 
 .select-conversation-placeholder {
@@ -452,6 +480,29 @@
         padding: 20px 15px !important;
         background: #fff !important;
         border-bottom: 1px solid #e0e0e0 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    .new-message-btn {
+        background: #fde8e9 !important;
+        color: #722F37 !important;
+        border: none !important;
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 50% !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.2s ease-in-out !important;
+        font-size: 16px !important;
+    }
+
+    .new-message-btn:hover {
+        background: #722F37 !important;
+        color: white !important;
     }
 
     .conversations-search {
@@ -477,10 +528,146 @@
     }
 
     /* Melhor espaçamento para o modal no mobile */
+    .modal-overlay {
+        display: none !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+        z-index: 9999 !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100vw !important;
+        height: 100vh !important;
+    }
+
+    .modal-overlay.active {
+        display: flex !important;
+    }
+
+    .modal-overlay[style*="flex"] {
+        display: flex !important;
+    }
+
     .modal {
-        width: 95%;
-        margin: 20px;
-        border-radius: 12px;
+        width: 95% !important;
+        margin: 20px !important;
+        border-radius: 20px !important;
+        background: white !important;
+        max-height: 80vh !important;
+        overflow-y: auto !important;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
+        position: relative !important;
+        z-index: 10000 !important;
+    }
+
+    /* Forçar exibição do modal quando ativo */
+    .modal-overlay.active,
+    .modal-overlay[style*="flex"] {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* CSS de emergência para garantir que o modal apareça */
+    #newMessageModal {
+        display: none !important;
+    }
+
+    #newMessageModal.active,
+    #newMessageModal[style*="flex"] {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+        z-index: 99999 !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100vw !important;
+        height: 100vh !important;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #722F37, #8b5cf6) !important;
+        color: white !important;
+        border-radius: 20px 20px 0 0 !important;
+        padding: 25px 20px !important;
+    }
+
+    .modal-title {
+        color: white !important;
+        font-size: 1.3em !important;
+        font-weight: 600 !important;
+    }
+
+    .modal-close {
+        color: white !important;
+        font-size: 24px !important;
+    }
+
+    .contact-search {
+        margin: 20px !important;
+        padding: 15px !important;
+        border-radius: 25px !important;
+        border: 1px solid #e0e0e0 !important;
+        font-size: 16px !important;
+    }
+
+    .contact-item {
+        display: flex !important;
+        align-items: center !important;
+        padding: 18px 20px !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .contact-item:hover {
+        background: #f8f9fa !important;
+    }
+
+    .contact-avatar, .contact-avatar-initial {
+        width: 45px !important;
+        height: 45px !important;
+        border-radius: 50% !important;
+        margin-right: 15px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .contact-avatar-initial {
+        background: linear-gradient(135deg, #722F37, #8b5cf6) !important;
+        color: white !important;
+        font-weight: 600 !important;
+        font-size: 1.1em !important;
+    }
+
+    .contact-info {
+        flex: 1 !important;
+    }
+
+    .contact-name {
+        font-weight: 600 !important;
+        color: #333 !important;
+        margin-bottom: 2px !important;
+    }
+
+    .contact-title {
+        color: #666 !important;
+        font-size: 0.9em !important;
+    }
+
+    .contact-arrow {
+        color: #ccc !important;
+        font-size: 14px !important;
     }
 
     .modal-header {
