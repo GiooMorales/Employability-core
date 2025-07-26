@@ -17,7 +17,7 @@
         </div>
         
         <div class="user-profile">
-            <img src="{{ Auth::user()->url_foto ? asset('storage/' . Auth::user()->url_foto) : asset('images/default-avatar.png') }}" alt="{{ Auth::user()->nome }}" class="user-avatar">
+            <img src="{{ Auth::user()->url_foto ? asset('storage/' . Auth::user()->url_foto) : asset('images/default-avatar.svg') }}" alt="{{ Auth::user()->nome }}" class="user-avatar">
             <span>{{ Auth::user()->nome }}</span>
         </div>
     </div>
@@ -67,7 +67,7 @@ bell.addEventListener('mouseenter', function() {
             } else {
                 popoverContent.innerHTML = data.notifications.map(n => `
                     <div style="display:flex; align-items:center; gap:10px; padding:10px 16px; border-bottom:1px solid #f0f0f0;">
-                        <img src="${n.from_user_avatar ? '/storage/' + n.from_user_avatar : '/images/default-avatar.png'}" alt="${n.from_user_name || ''}" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+                        <img src="${n.from_user_avatar ? '/storage/' + n.from_user_avatar : '/images/default-avatar.svg'}" alt="${n.from_user_name || ''}" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                         <div style="flex:1; min-width:0;">
                             <div style="font-size:14px; color:#333; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${n.message}</div>
                             <div style="font-size:12px; color:#888;">${n.created_at}</div>

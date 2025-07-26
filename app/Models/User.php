@@ -38,6 +38,10 @@ class User extends Authenticatable
         'github_username',
         'github_token',
         'github_refresh_token',
+        'banido',
+        'suspenso_ate',
+        'motivo',
+        'is_admin',
     ];
 
     /**
@@ -56,6 +60,9 @@ class User extends Authenticatable
      */
     protected $casts = [
         'data_criacao' => 'datetime',
+        'banido' => 'boolean',
+        'suspenso_ate' => 'datetime',
+        'is_admin' => 'boolean',
     ];
 
     // Sobrescrever o método getAuthPassword para usar o campo senha

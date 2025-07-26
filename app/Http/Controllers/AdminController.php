@@ -14,7 +14,7 @@ class AdminController extends Controller
     public function users(Request $request)
     {
         $query = $request->input('q');
-        $usuarios = \App\Models\Usuario::query();
+        $usuarios = \App\Models\User::query();
         if ($query) {
             $usuarios = $usuarios->where(function($q) use ($query) {
                 $q->where('nome', 'like', "%$query%")
@@ -27,7 +27,7 @@ class AdminController extends Controller
 
     public function promoteToAdmin($id)
     {
-        $usuario = \App\Models\Usuario::findOrFail($id);
+        $usuario = \App\Models\User::findOrFail($id);
         $usuario->is_admin = true;
         $usuario->save();
         return redirect()->route('admin.users')->with('success', 'Usuário promovido a admin com sucesso!');
@@ -35,7 +35,7 @@ class AdminController extends Controller
 
     public function demoteFromAdmin($id)
     {
-        $usuario = \App\Models\Usuario::findOrFail($id);
+        $usuario = \App\Models\User::findOrFail($id);
         $usuario->is_admin = false;
         $usuario->save();
         return redirect()->route('admin.users')->with('success', 'Usuário rebaixado de admin com sucesso!');
@@ -43,16 +43,25 @@ class AdminController extends Controller
 
     public function banUser(Request $request, $id)
     {
-        $usuario = \App\Models\Usuario::findOrFail($id);
+        $usuario = \App\Models\User::findOrFail($id);
         $usuario->banido = true;
         $usuario->motivo = $request->input('motivo', null);
         $usuario->save();
         return redirect()->route('admin.users')->with('success', 'Usuário banido permanentemente!');
     }
 
+    public function unbanUser($id)
+    {
+        $usuario = \App\Models\User::findOrFail($id);
+        $usuario->banido = false;
+        $usuario->motivo = null;
+        $usuario->save();
+        return redirect()->route('admin.users')->with('success', 'Usuário desbanido com sucesso!');
+    }
+
     public function suspendUser(Request $request, $id)
     {
-        $usuario = \App\Models\Usuario::findOrFail($id);
+        $usuario = \App\Models\User::findOrFail($id);
         $dias = (int) $request->input('dias', 0);
         $horas = (int) $request->input('horas', 0);
         $minutos = (int) $request->input('minutos', 0);
@@ -66,7 +75,7 @@ class AdminController extends Controller
 
     public function unsuspendUser($id)
     {
-        $usuario = \App\Models\Usuario::findOrFail($id);
+        $usuario = \App\Models\User::findOrFail($id);
         $usuario->suspenso_ate = null;
         $usuario->save();
         return redirect()->route('admin.users')->with('success', 'Suspensão removida!');

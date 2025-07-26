@@ -1,0 +1,488 @@
+/* Reset e variáveis CSS */
+*,
+:after,
+:before {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x: ;
+  --tw-pan-y: ;
+  --tw-pinch-zoom: ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position: ;
+  --tw-gradient-via-position: ;
+  --tw-gradient-to-position: ;
+  --tw-ordinal: ;
+  --tw-slashed-zero: ;
+  --tw-numeric-figure: ;
+  --tw-numeric-spacing: ;
+  --tw-numeric-fraction: ;
+  --tw-ring-inset: ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgba(59, 130, 246, 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur: ;
+  --tw-brightness: ;
+  --tw-contrast: ;
+  --tw-grayscale: ;
+  --tw-hue-rotate: ;
+  --tw-invert: ;
+  --tw-saturate: ;
+  --tw-sepia: ;
+  --tw-drop-shadow: ;
+  --tw-backdrop-blur: ;
+  --tw-backdrop-brightness: ;
+  --tw-backdrop-contrast: ;
+  --tw-backdrop-grayscale: ;
+  --tw-backdrop-hue-rotate: ;
+  --tw-backdrop-invert: ;
+  --tw-backdrop-opacity: ;
+  --tw-backdrop-saturate: ;
+  --tw-backdrop-sepia: ;
+  --tw-contain-size: ;
+  --tw-contain-layout: ;
+  --tw-contain-paint: ;
+  --tw-contain-style: ;
+}
+
+*,
+:after,
+:before {
+  border: 0 solid #e5e7eb;
+  box-sizing: border-box;
+}
+
+:after,
+:before {
+  --tw-content: "";
+}
+
+/* Estilos base */
+body {
+  font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  line-height: 1.5;
+  margin: 0;
+  background-color: #f8f9fa;
+}
+
+/* Container principal da postagem */
+.postagem-container {
+  max-width: 36rem;
+  margin: 2rem auto;
+  background-color: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Header da postagem */
+.postagem-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+}
+
+.postagem-avatar {
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+}
+
+.postagem-user-info {
+  margin-left: 0.75rem;
+}
+
+.postagem-user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.postagem-timestamp {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.postagem-actions {
+  margin-left: auto;
+}
+
+.postagem-more-btn {
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.postagem-more-btn:hover {
+  color: #374151;
+}
+
+/* Conteúdo da postagem */
+.postagem-content {
+  padding: 0 1rem 0.5rem;
+}
+
+.postagem-text {
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+  color: #111827;
+  line-height: 1.5;
+}
+
+.postagem-image {
+  width: 100%;
+  height: 24rem;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Interações da postagem */
+.postagem-interactions {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.postagem-interactions-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.postagem-left-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.postagem-right-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.postagem-action-btn {
+  display: flex;
+  align-items: center;
+  color: #4b5563;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s;
+  font-size: 0.75rem;
+}
+
+.postagem-action-btn:hover {
+  color: #dc2626;
+}
+
+.postagem-action-btn.like:hover {
+  color: #dc2626;
+}
+
+.postagem-action-btn.comment:hover {
+  color: #3b82f6;
+}
+
+.postagem-action-btn.share:hover {
+  color: #10b981;
+}
+
+.postagem-action-btn.bookmark:hover,
+.postagem-action-btn.share-btn:hover {
+  color: #8b5cf6;
+}
+
+.postagem-action-icon {
+  margin-right: 0.25rem;
+  transition: transform 0.15s;
+}
+
+.postagem-action-btn:hover .postagem-action-icon {
+  transform: scale(1.1);
+}
+
+.postagem-action-count {
+  font-size: 0.75rem;
+}
+
+/* Seção de comentários */
+.postagem-comments {
+  padding: 0.75rem 1rem;
+}
+
+.postagem-comments-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+  color: #111827;
+}
+
+.postagem-comment {
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+.postagem-comment-avatar {
+  height: 2rem;
+  width: 2rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  margin-right: 0.75rem;
+}
+
+.postagem-comment-content {
+  background-color: #f9fafb;
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+  flex: 1;
+}
+
+.postagem-comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.postagem-comment-author {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.postagem-comment-time {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.postagem-comment-text {
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  color: #111827;
+  line-height: 1.4;
+}
+
+.postagem-comment-actions {
+  display: flex;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  gap: 1rem;
+}
+
+.postagem-comment-action {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s;
+  display: flex;
+  align-items: center;
+}
+
+.postagem-comment-action:hover {
+  color: #dc2626;
+}
+
+.postagem-comment-action.reply:hover {
+  color: #374151;
+}
+
+.postagem-comment-action-icon {
+  font-size: 0.875rem;
+  margin-right: 0.25rem;
+}
+
+/* Formulário de comentário */
+.postagem-comment-form {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 0.75rem;
+}
+
+.postagem-comment-input-container {
+  margin-left: 0.75rem;
+  flex: 1;
+  position: relative;
+}
+
+.postagem-comment-input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: #f9fafb;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  border: none;
+  outline: none;
+  transition: box-shadow 0.15s;
+}
+
+.postagem-comment-input:focus {
+  box-shadow: 0 0 0 1px #8b5cf6;
+}
+
+.postagem-comment-send {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8b5cf6;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.postagem-comment-send:hover {
+  color: #7c3aed;
+}
+
+/* Botão voltar */
+.voltar-btn {
+  display: inline-flex;
+  align-items: center;
+  color: #8b5cf6;
+  text-decoration: none;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  transition: color 0.15s;
+}
+
+.voltar-btn:hover {
+  color: #7c3aed;
+  text-decoration: underline;
+}
+
+.voltar-btn::before {
+  content: "←";
+  margin-right: 0.5rem;
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  .postagem-container {
+    margin: 1rem;
+    border-radius: 0.5rem;
+  }
+  
+  .postagem-image {
+    height: 16rem;
+  }
+  
+  .postagem-interactions-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .postagem-left-actions,
+  .postagem-right-actions {
+    justify-content: center;
+  }
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.postagem-container {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Estilos para ícones Material Symbols */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-size: 1.25rem;
+}
+
+/* Estados de hover melhorados */
+.postagem-action-btn:active {
+  transform: scale(0.95);
+}
+
+.postagem-comment-action:active {
+  transform: scale(0.95);
+}
+
+/* Estilos para likes de comentários */
+.comment-like-btn {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: #6b7280;
+}
+
+.comment-like-btn:hover {
+  color: #dc2626;
+}
+
+.comment-like-btn.liked {
+  color: #dc2626;
+}
+
+.comment-like-btn.liked .comment-like-icon {
+  color: #dc2626;
+}
+
+.comment-like-icon {
+  transition: transform 0.15s;
+}
+
+.comment-like-btn:hover .comment-like-icon {
+  transform: scale(1.1);
+}
+
+.comment-like-count {
+  font-size: 0.75rem;
+  margin-left: 0.25rem;
+}
+
+/* Estilos para likes de postagem */
+.postagem-action-btn.like.liked {
+  color: #dc2626;
+}
+
+.postagem-action-btn.like.liked .postagem-action-icon {
+  color: #dc2626;
+}
+
+/* Animações para likes */
+@keyframes likeAnimation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.comment-like-btn:active .comment-like-icon,
+.postagem-action-btn.like:active .postagem-action-icon {
+  animation: likeAnimation 0.3s ease-out;
+} 

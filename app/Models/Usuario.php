@@ -34,7 +34,10 @@ class Usuario extends Model
         'link',
         'url_foto',
         'quantidade_conn',
-        'is_admin' // Adicionado para permitir manipulação do campo admin
+        'is_admin',
+        'banido',
+        'suspenso_ate',
+        'motivo'
     ];
 
     protected $hidden = [
@@ -47,7 +50,9 @@ class Usuario extends Model
         'data_criacao' => 'datetime',
         'data_atualizacao' => 'datetime',
         'ultimo_acesso' => 'datetime',
-        'is_admin' => 'boolean', // Adicionado para cast automático
+        'is_admin' => 'boolean',
+        'banido' => 'boolean',
+        'suspenso_ate' => 'datetime',
     ];
 
     // Método para atualizar o último acesso

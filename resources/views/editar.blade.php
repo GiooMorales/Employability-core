@@ -28,7 +28,7 @@
                         <div class="section-header">Foto de Perfil</div>
                         <div class="profile-images">
                             <div class="profile-avatar-edit">
-                                <img src="{{ $user->url_foto ? asset('storage/' . $user->url_foto) : asset('images/default-avatar.png') }}" 
+                                <img src="{{ $user->url_foto ? asset('storage/' . $user->url_foto) : asset('images/default-avatar.svg') }}" 
                                      alt="Avatar" 
                                      class="avatar-preview" 
                                      id="avatarPreview">

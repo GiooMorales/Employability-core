@@ -18,6 +18,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PostagemController;
 use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\CommentLikeController;
 
 // Rota de teste (opcional)
 Route::get('/webtest', function () {
@@ -52,9 +53,12 @@ Route::middleware(['auth', 'admincheck'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/postagens/{postagem_id}/comentarios', [ComentarioController::class, 'index'])->name('comentarios.index');
     Route::post('/postagens/{postagem_id}/comentarios', [ComentarioController::class, 'store'])->name('comentarios.store');
-    // Likes
+    // Likes de postagens
     Route::get('/postagens/{postagem_id}/likes', [LikeController::class, 'index'])->name('likes.index');
     Route::post('/postagens/{postagem_id}/like', [LikeController::class, 'toggle'])->name('likes.toggle');
+    // Likes de comentários
+    Route::get('/comentarios/{comentario_id}/likes', [CommentLikeController::class, 'index'])->name('comment.likes.index');
+    Route::post('/comentarios/{comentario_id}/like', [CommentLikeController::class, 'toggle'])->name('comment.likes.toggle');
 });
 
 // Compartilhar postagem no chat (autenticado)
@@ -161,6 +165,7 @@ Route::middleware(['auth', 'admincheck'])->group(function () {
     Route::post('/admin/users/{id}/promote', [AdminController::class, 'promoteToAdmin'])->name('admin.users.promote');
     Route::post('/admin/users/{id}/demote', [AdminController::class, 'demoteFromAdmin'])->name('admin.users.demote');
     Route::post('/admin/users/{id}/ban', [AdminController::class, 'banUser'])->name('admin.users.ban');
+    Route::post('/admin/users/{id}/unban', [AdminController::class, 'unbanUser'])->name('admin.users.unban');
     Route::post('/admin/users/{id}/suspend', [AdminController::class, 'suspendUser'])->name('admin.users.suspend');
     Route::post('/admin/users/{id}/unsuspend', [AdminController::class, 'unsuspendUser'])->name('admin.users.unsuspend');
 });

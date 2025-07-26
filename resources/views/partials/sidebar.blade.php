@@ -18,16 +18,6 @@
             <i class="fas fa-envelope"></i>
             <span>Mensagens</span>
         </a>
-        
-        <a href="{{ route('empregos') }}" class="menu-item {{ request()->routeIs('empregos') ? 'active' : '' }}">
-            <i class="fas fa-briefcase"></i>
-            <span>Empregos</span>
-        </a>
-        
-        <a href="{{ route('projetos') }}" class="menu-item {{ request()->routeIs('projetos*') ? 'active' : '' }}">
-            <i class="fas fa-project-diagram"></i>
-            <span>Projetos</span>
-        </a>
 
         {{-- Itens exclusivos para admin --}}
         @auth

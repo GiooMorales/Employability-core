@@ -129,6 +129,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 .chat-header {
@@ -140,16 +141,17 @@
 
 .messages {
     flex: 1;
-    padding: 15px;
+    padding: 10px 15px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    width: 100%;
 }
 
 .message {
-    max-width: 70%;
-    padding: 10px 15px;
+    max-width: 100%;
+    padding: 12px 20px;
     border-radius: 18px;
     position: relative;
     word-wrap: break-word;
@@ -353,8 +355,23 @@
 
 /* Responsividade */
 @media (max-width: 768px) {
+    .messages-container {
+        height: 100vh !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        background: #fff !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        z-index: 9999 !important;
+    }
+
     .conversations-list {
         display: none;
+        width: 100%;
     }
 
     .conversations-list.active {
@@ -372,7 +389,116 @@
 
     .mobile-back {
         display: block;
-        margin-right: 10px;
+        margin-right: 15px;
         cursor: pointer;
+        padding: 8px;
+        border-radius: 50%;
+        background: #f5f5f5;
+    }
+
+    .chat-header {
+        padding: 20px 15px !important;
+        background: #fff !important;
+        border-bottom: 1px solid #e0e0e0 !important;
+    }
+
+    .messages {
+        padding: 20px 20px !important;
+        gap: 20px !important;
+        background: #fff !important;
+    }
+
+    .message {
+        max-width: 100% !important;
+        padding: 18px 30px !important;
+        border-radius: 25px !important;
+        margin-bottom: 15px !important;
+        line-height: 1.4 !important;
+    }
+
+    .message.incoming {
+        background: #fde8e9 !important;
+        color: #000 !important;
+        align-self: flex-start !important;
+        margin-right: 30px !important;
+    }
+
+    .message.outgoing {
+        background: #722F37 !important;
+        color: white !important;
+        align-self: flex-end !important;
+        margin-left: 30px !important;
+    }
+
+    .message-input-container {
+        padding: 20px 15px !important;
+        background: #fff !important;
+        border-top: 1px solid #e0e0e0 !important;
+    }
+
+    .message-input {
+        padding: 12px 15px !important;
+        border-radius: 25px !important;
+        min-height: 45px !important;
+        font-size: 16px !important; /* Evita zoom no iOS */
+    }
+
+    .send-btn {
+        width: 45px !important;
+        height: 45px !important;
+    }
+
+    .conversations-header {
+        padding: 20px 15px !important;
+        background: #fff !important;
+        border-bottom: 1px solid #e0e0e0 !important;
+    }
+
+    .conversations-search {
+        padding: 15px !important;
+        background: #fff !important;
+    }
+
+    .conversations-search input {
+        padding: 12px 15px !important;
+        border-radius: 25px !important;
+        font-size: 16px !important;
+    }
+
+    .conversation-item {
+        padding: 18px 15px !important;
+        background: #fff !important;
+    }
+
+    .conversation-avatar {
+        width: 45px !important;
+        height: 45px !important;
+        margin-right: 15px !important;
+    }
+
+    /* Melhor espaçamento para o modal no mobile */
+    .modal {
+        width: 95%;
+        margin: 20px;
+        border-radius: 12px;
+    }
+
+    .modal-header {
+        padding: 20px 15px;
+    }
+
+    .modal-content {
+        padding: 20px 15px;
+    }
+
+    .contact-item {
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .contact-avatar {
+        width: 45px;
+        height: 45px;
+        margin-right: 15px;
     }
 } 

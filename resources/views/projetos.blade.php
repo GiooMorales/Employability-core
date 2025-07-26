@@ -34,12 +34,6 @@
             </div>
         </div>
     @empty
-        <div class="empty-state">
-            <p>Você ainda não tem projetos cadastrados.</p>
-            <a href="{{ route('projetos.criar') }}" class="profile-action-btn edit-btn">
-                <i class="fas fa-plus"></i> Adicionar projeto
-            </a>
-        </div>
     @endforelse
 </div>
 </body>

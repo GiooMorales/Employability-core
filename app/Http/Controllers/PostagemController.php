@@ -23,25 +23,32 @@ class PostagemController extends Controller
     // Visualizar uma postagem específica (público)
     public function show($id)
     {
-        $postagem = Postagem::with(['user', 'comentarios.user', 'likes'])->findOrFail($id);
+        $postagem = Postagem::with(['user', 'comentarios.user', 'comentarios.likes', 'likes'])->findOrFail($id);
         return view('postagens.show', compact('postagem'));
     }
 
-    // Formulário de criação (apenas admin)
+    // Formulário de criação (apenas admin ou usuários com email @teste.com)
     public function create()
     {
-        if (!Auth::user() || !Auth::user()->is_admin) {
-            abort(403, 'Acesso negado');
+        $user = Auth::user();
+        
+        // Verificar se é admin ou tem email @teste.com
+        if (!$user || (!$user->is_admin && !str_ends_with($user->email, '@teste.com'))) {
+            abort(403, 'Acesso negado. Apenas administradores ou usuários com email @teste.com podem criar postagens.');
         }
         return view('postagens.create');
     }
 
-    // Salvar nova postagem (apenas admin)
+    // Salvar nova postagem (apenas admin ou usuários com email @teste.com)
     public function store(Request $request)
     {
-        if (!Auth::user() || !Auth::user()->is_admin) {
-            abort(403, 'Acesso negado');
+        $user = Auth::user();
+        
+        // Verificar se é admin ou tem email @teste.com
+        if (!$user || (!$user->is_admin && !str_ends_with($user->email, '@teste.com'))) {
+            abort(403, 'Acesso negado. Apenas administradores ou usuários com email @teste.com podem criar postagens.');
         }
+        
         $data = $request->validate([
             'titulo' => 'required|string|max:255',
             'conteudo' => 'required|string',
@@ -60,7 +67,7 @@ class PostagemController extends Controller
     {
         $postagem = Postagem::findOrFail($id);
         if (!Auth::user() || !Auth::user()->is_admin) {
-            abort(403, 'Acesso negado');
+            abort(403, 'Acesso negado. Apenas administradores podem editar postagens.');
         }
         return view('postagens.edit', compact('postagem'));
     }
@@ -70,7 +77,7 @@ class PostagemController extends Controller
     {
         $postagem = Postagem::findOrFail($id);
         if (!Auth::user() || !Auth::user()->is_admin) {
-            abort(403, 'Acesso negado');
+            abort(403, 'Acesso negado. Apenas administradores podem editar postagens.');
         }
         $data = $request->validate([
             'titulo' => 'required|string|max:255',
@@ -89,7 +96,7 @@ class PostagemController extends Controller
     {
         $postagem = Postagem::findOrFail($id);
         if (!Auth::user() || !Auth::user()->is_admin) {
-            abort(403, 'Acesso negado');
+            abort(403, 'Acesso negado. Apenas administradores podem excluir postagens.');
         }
         $postagem->delete();
         return redirect()->route('postagens.index')->with('success', 'Postagem excluída com sucesso!');
@@ -132,6 +139,11 @@ class PostagemController extends Controller
 
         // Opcional: disparar evento para websocket
         event(new \App\Events\MessageSent($message));
+
+        // Retornar JSON se for requisição AJAX
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Postagem compartilhada no chat!']);
+        }
 
         return back()->with('success', 'Postagem compartilhada no chat!');
     }

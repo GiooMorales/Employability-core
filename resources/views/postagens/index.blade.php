@@ -12,9 +12,13 @@
     @forelse($postagens as $postagem)
         <div class="instagram-card">
             <div class="instagram-card-header">
-                <img src="{{ $postagem->user->url_foto ? asset('storage/' . $postagem->user->url_foto) : asset('images/default-avatar.png') }}" class="instagram-avatar" alt="avatar">
+                <a href="{{ route('perfil.show', $postagem->user->id_usuarios) }}" style="text-decoration: none; color: inherit;">
+                    <img src="{{ $postagem->user->url_foto ? asset('storage/' . $postagem->user->url_foto) : asset('images/default-avatar.svg') }}" class="instagram-avatar" alt="avatar" style="cursor: pointer;">
+                </a>
                 <div>
-                    <span class="instagram-username">{{ $postagem->user->nome ?? 'Admin' }}</span>
+                    <a href="{{ route('perfil.show', $postagem->user->id_usuarios) }}" style="text-decoration: none; color: inherit;">
+                        <span class="instagram-username" style="cursor: pointer;">{{ $postagem->user->nome ?? 'Admin' }}</span>
+                    </a>
                     <span class="instagram-date">{{ $postagem->created_at->diffForHumans() }}</span>
                 </div>
             </div>

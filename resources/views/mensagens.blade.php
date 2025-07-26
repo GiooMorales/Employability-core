@@ -52,7 +52,7 @@
                     @php
                         $otherUser = $conversation->user_one_id == Auth::id() ? $conversation->userTwo : $conversation->userOne;
                     @endphp
-                    <img src="{{ $otherUser->url_foto ?: 'https://placehold.co/50x50' }}" alt="{{ $otherUser->nome }}" class="conversation-avatar">
+                    <img src="{{ $otherUser->url_foto ? asset('storage/' . $otherUser->url_foto) : asset('images/default-avatar.svg') }}" alt="{{ $otherUser->nome }}" class="conversation-avatar">
                     <div class="conversation-info">
                         <div class="conversation-header">
                             <div class="conversation-name">{{ $otherUser->nome }}</div>
@@ -85,7 +85,7 @@
                 <div class="mobile-back" id="mobileBack">
                     <i class="fas fa-arrow-left"></i>
                 </div>
-                <img src="{{ $otherUser->url_foto ?: 'https://placehold.co/40x40' }}" alt="Avatar" class="conversation-avatar" id="currentChatAvatar">
+                <img src="{{ $otherUser->url_foto ? asset('storage/' . $otherUser->url_foto) : asset('images/default-avatar.svg') }}" alt="Avatar" class="conversation-avatar" id="currentChatAvatar">
                 <div class="chat-title">
                     <div class="chat-name" id="currentChatName">{{ $otherUser->nome }}</div>
                 </div>
@@ -100,7 +100,7 @@
                         @if($post)
                             <a href="{{ route('postagens.show', $post->id) }}" class="chat-post-card{{ $message->sender_id == Auth::id() ? ' outgoing' : '' }}">
                                 <div class="chat-post-card-header" style="display:flex;align-items:center;gap:8px;">
-                                    <img src="{{ $post->user->url_foto ? asset('storage/' . $post->user->url_foto) : asset('images/default-avatar.png') }}" class="chat-post-card-avatar" alt="avatar" style="width:28px;height:28px;">
+                                    <img src="{{ $post->user->url_foto ? asset('storage/' . $post->user->url_foto) : asset('images/default-avatar.svg') }}" class="chat-post-card-avatar" alt="avatar" style="width:28px;height:28px;">
                                     <span class="chat-post-card-username" style="display:inline-block;vertical-align:middle;">{{ $post->user->nome ?? 'Admin' }}</span>
                                     <span class="chat-post-card-date" style="display:inline-block;vertical-align:middle;">{{ $post->created_at->diffForHumans() }}</span>
                                 </div>

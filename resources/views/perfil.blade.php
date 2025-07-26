@@ -13,7 +13,7 @@
     <div class="profile-cover"></div>
     <div class="profile-main">
         <div class="profile-avatar-container">
-            <img src="{{ $usuario->url_foto ? asset('storage/' . $usuario->url_foto) : asset('images/default-avatar.png') }}" 
+            <img src="{{ $usuario->url_foto ? asset('storage/' . $usuario->url_foto) : asset('images/default-avatar.svg') }}" 
                  alt="{{ $usuario->nome }}" 
                  class="profile-avatar-large">
         </div>

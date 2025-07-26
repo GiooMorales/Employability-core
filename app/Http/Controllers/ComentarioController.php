@@ -29,6 +29,16 @@ class ComentarioController extends Controller
         $data['user_id'] = Auth::id();
         $data['postagem_id'] = $postagem_id;
         $comentario = Comentario::create($data);
-        return response()->json($comentario, 201);
+        
+        // Carregar o usuário e likes para retornar dados completos
+        $comentario->load('user', 'likes');
+        
+        return response()->json([
+            'id' => $comentario->id,
+            'conteudo' => $comentario->conteudo,
+            'user' => $comentario->user,
+            'created_at' => $comentario->created_at,
+            'likes' => $comentario->likes
+        ], 201);
     }
 }

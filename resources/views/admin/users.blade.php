@@ -88,6 +88,8 @@
         .admin-btn.remover:hover { background: #e0a800; color: #fff; }
         .admin-btn.banir { background: #a8324a; color: #fff; }
         .admin-btn.banir:hover { background: #800032; }
+        .admin-btn.desbanir { background: #43a047; color: #fff; }
+        .admin-btn.desbanir:hover { background: #2e7031; }
         .admin-btn.suspender { background: #b08ca6; color: #fff; }
         .admin-btn.suspender:hover { background: #800032; color: #fff; }
         .admin-btn.unsuspender { background: #43a047; color: #fff; }
@@ -168,6 +170,12 @@
                             @csrf
                             <button type="button" class="admin-btn banir" onclick="abrirModalBanir({{ $usuario->id_usuarios }})">Banir</button>
                         </form>
+                        @if(!empty($usuario->banido) && $usuario->banido)
+                            <form action="{{ route('admin.users.unban', $usuario->id_usuarios) }}" method="POST" style="display:inline;">
+                                @csrf
+                                <button type="submit" class="admin-btn desbanir">Desbanir</button>
+                            </form>
+                        @endif
                         @if(!empty($usuario->suspenso_ate) && $usuario->suspenso_ate > now())
                             <form action="{{ route('admin.users.unsuspend', $usuario->id_usuarios) }}" method="POST" style="display:inline;">
                                 @csrf

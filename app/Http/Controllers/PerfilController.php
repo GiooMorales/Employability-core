@@ -259,6 +259,18 @@ class PerfilController extends Controller
         $experiencias = $usuario->experiences;
         $formacoes = $usuario->education;
         
+        // Carregar repositórios do GitHub
+        $repos = [];
+        if ($usuario->github_username && $usuario->github_token) {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Accept' => 'application/vnd.github.v3+json',
+                'Authorization' => 'token ' . $usuario->github_token,
+            ])->get("https://api.github.com/users/{$usuario->github_username}/repos");
+            if ($response->ok()) {
+                $repos = $response->json();
+            }
+        }
+        
         $estatisticas = [
             'conexoes' => 0, // TODO: Implementar contagem de conexões
             'projetos' => $usuario->projects()->count(),
@@ -277,7 +289,7 @@ class PerfilController extends Controller
             }
         }
 
-        return view('perfil', compact('usuario', 'habilidades', 'experiencias', 'formacoes', 'estatisticas', 'statusConexao'));
+        return view('perfil', compact('usuario', 'habilidades', 'experiencias', 'formacoes', 'estatisticas', 'statusConexao', 'repos'));
     }
 
     // Adicionar experiência profissional via AJAX
